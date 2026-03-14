@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>juryrig &mdash; New York Criminal Court Analysis</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">jury<span class="logo-accent">rig</span></a>
+      <div class="header-controls">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+        <button id="themeToggle" class="theme-toggle" onclick="juryrigToggleTheme()" aria-label="Toggle theme">&#9790;</button>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="findings.html">Findings</a></li>
+          <li><a href="race-analysis.html">Race Analysis</a></li>
+          <li><a href="pretrial.html">Pretrial Impact</a></li>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>New York Criminal Court Analysis</h1>
+      <p class="subtitle">
+        Two independent analyses of public New York State court records: a machine-learning model
+        estimating conviction likelihood from 1.6 million arraignment records, and a before-after
+        comparison of pretrial release rates around bail-law amendments using 854,000 cases.
+      </p>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">1.6M</div>
+          <div class="stat-label">Arraignment Records</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">0.86</div>
+          <div class="stat-label">Best Model AUROC</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">854K</div>
+          <div class="stat-label">Pretrial Cases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">61</div>
+          <div class="stat-label">Counties Analyzed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- Two branches -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Two Research Branches</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Branch 1: Conviction Prediction</h3>
+          <p>
+            Using arraignment-time information alone &mdash; county, charge severity, arrest type,
+            demographics &mdash; how well can a model estimate whether a case ends in conviction?
+          </p>
+          <div class="insight-box" style="margin-top: 1rem;">
+            <p><strong>Key finding:</strong> Geography dominates. NYC courts have a 25% conviction rate;
+            non-NYC courts have 69%. The best model reaches 79% accuracy and AUROC 0.86.</p>
+          </div>
+          <a href="findings.html" class="card-link">Explore findings</a>
+        </div>
+        <div class="card">
+          <h3>Branch 2: Pretrial Release Impact</h3>
+          <p>
+            Did pretrial release rates change differently for charge categories targeted by
+            New York's May 2022 and June 2023 bail-law amendments?
+          </p>
+          <div class="insight-box" style="margin-top: 1rem;">
+            <p><strong>Key finding:</strong> Firearm charges showed the largest shift &mdash;
+            release rates dropped 20&ndash;32 pp more than baseline after May 2022.</p>
+          </div>
+          <a href="pretrial.html" class="card-link">Explore pretrial impact</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick visual -->
+    <section class="section">
+      <div class="section-header">
+        <h2>At a Glance</h2>
+        <span class="section-tag">Interactive</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Model Performance Comparison</h3>
+        <p class="chart-subtitle">Three classifiers evaluated on 271,701 held-out test cases</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="heroModelChart"></canvas>
+        </div>
+        <p class="chart-note">Higher is better for AUROC and PR-AUC. Lower is better for Brier Score. Dummy baseline uses training-set class distribution.</p>
+      </div>
+
+      <div class="chart-container">
+        <h3>Monthly Arraignment Volume</h3>
+        <p class="chart-subtitle">OCA-STAT records by year-month cohort, 2021&ndash;2025</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="volumeChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Strongest patterns -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Strongest Patterns</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Geography</h3>
+          <p>NYC courts: ~25% conviction rate. Non-NYC courts: ~69%.
+          This is the single strongest predictor in the dataset, dwarfing all other factors.</p>
+        </div>
+        <div class="card">
+          <h3>Charge Severity</h3>
+          <p>Felony cases: ~66% conviction rate. Violations: ~25%.
+          Charge severity is the second-strongest signal after geography.</p>
+        </div>
+        <div class="card">
+          <h3>County Variation</h3>
+          <p>Model AUROC ranges from 0.52 (Schoharie) to 0.77 (Monroe).
+          Accuracy varies substantially across New York's 61 counties.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigate -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Explore the Analysis</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3>Race-Adjusted Association</h3>
+          <p>Three independent methods examine whether race correlates with conviction after controlling
+          for case characteristics. The Black&ndash;White gap is ~2.6 pp across all methods.</p>
+          <a href="race-analysis.html" class="card-link">View race analysis</a>
+        </div>
+        <div class="card">
+          <h3>Methodology</h3>
+          <p>Scikit-learn classifiers with post-hoc calibration. 19 arraignment-time features.
+          Full model specifications, metrics, and library versions.</p>
+          <a href="methodology.html" class="card-link">View methods</a>
+        </div>
+        <div class="card">
+          <h3>FAQ</h3>
+          <p>What is OCA-STAT? What does the model predict? What are the limitations?
+          Short answers to common questions.</p>
+          <a href="faq.html" class="card-link">Read FAQ</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Limitations -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Limitations</h2>
+      </div>
+      <div class="warning-box">
+        <p>
+          The predictive model uses only arraignment-time information. It excludes plea negotiations,
+          evidence strength, attorney quality, and criminal history detail. The pretrial analysis is
+          observational, not a controlled experiment. Both branches cover New York State only (2021&ndash;2025).
+          Model accuracy varies by county and demographic group.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+    </div>
+  </footer>
+
+  <script>
+    juryrigChartDefaults();
+
+    var chartInstances = [];
+
+    function buildCharts() {
+      chartInstances.forEach(function(c) { c.destroy(); });
+      chartInstances = [];
+      var C = juryrigColors();
+
+      chartInstances.push(new Chart(document.getElementById('heroModelChart'), {
+        type: 'bar',
+        data: {
+          labels: ['AUROC', 'PR-AUC', 'Accuracy', 'Brier Score'],
+          datasets: [
+            { label: 'Dummy Baseline', data: [0.5, 0.4316, 0.5684, 0.2461], backgroundColor: C.muted, borderRadius: 4 },
+            { label: 'Logistic Regression', data: [0.8465, 0.8148, 0.7688, 0.1569], backgroundColor: C.accent, borderRadius: 4 },
+            { label: 'Hist. Gradient Boosting', data: [0.8644, 0.8302, 0.7861, 0.1496], backgroundColor: C.navy, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(4); } } } },
+          scales: { y: { beginAtZero: true, max: 1, ticks: { callback: function(v) { return v.toFixed(1); } } } }
+        }
+      }));
+
+      var cohortData = {"2021-1":21768,"2021-2":18994,"2021-3":27062,"2021-4":28317,"2021-5":25913,"2021-6":30429,"2021-7":30727,"2021-8":33329,"2021-9":29217,"2021-10":28661,"2021-11":26224,"2021-12":24927,"2022-1":23887,"2022-2":24547,"2022-3":30541,"2022-4":29638,"2022-5":30992,"2022-6":31872,"2022-7":30280,"2022-8":31355,"2022-9":30350,"2022-10":30408,"2022-11":29952,"2022-12":27397,"2023-1":31461,"2023-2":30006,"2023-3":34958,"2023-4":33722,"2023-5":36860,"2023-6":36476,"2023-7":36076,"2023-8":38302,"2023-9":35531,"2023-10":35910,"2023-11":33615,"2023-12":30619,"2024-1":33680,"2024-2":34270,"2024-3":34868,"2024-4":34201,"2024-5":37232,"2024-6":34834,"2024-7":38143,"2024-8":36822,"2024-9":35382,"2024-10":37246,"2024-11":32161,"2024-12":30656,"2025-1":33852,"2025-2":30545,"2025-3":35037};
+      var cohortLabels = Object.keys(cohortData).map(function(k) {
+        var parts = k.split('-');
+        return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parts[1]-1] + ' ' + parts[0];
+      });
+
+      chartInstances.push(new Chart(document.getElementById('volumeChart'), {
+        type: 'line',
+        data: {
+          labels: cohortLabels,
+          datasets: [{
+            label: 'Monthly Arraignments',
+            data: Object.values(cohortData),
+            borderColor: C.accent,
+            backgroundColor: C.accent + '1a',
+            fill: true, tension: 0.3, pointRadius: 2, pointHoverRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return ctx.parsed.y.toLocaleString() + ' cases'; } } } },
+          scales: { x: { ticks: { maxTicksLimit: 12 } }, y: { beginAtZero: false, ticks: { callback: function(v) { return (v/1000).toFixed(0) + 'K'; } } } }
+        }
+      }));
+    }
+
+    buildCharts();
+    window.juryrigRebuildCharts = function() { juryrigChartDefaults(); buildCharts(); };
+  </script>
+</body>
+</html>

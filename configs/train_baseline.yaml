@@ -1,0 +1,17 @@
+label_column: conviction_label
+split_column: split
+random_state: 7
+models:
+  - dummy
+  - logistic_regression
+  - hist_gradient_boosting
+calibration:
+  enabled: true
+  method: sigmoid
+subgroup_columns:
+  - Race
+  - Ethnicity
+  - Gender
+  - age_bucket
+  - Region
+

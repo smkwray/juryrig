@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>FAQ &mdash; juryrig</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">jury<span class="logo-accent">rig</span></a>
+      <div class="header-controls">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+        <button id="themeToggle" class="theme-toggle" onclick="juryrigToggleTheme()" aria-label="Toggle theme">&#9790;</button>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="findings.html">Findings</a></li>
+          <li><a href="race-analysis.html">Race Analysis</a></li>
+          <li><a href="pretrial.html">Pretrial Impact</a></li>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="faq.html" class="active">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Frequently Asked Questions</h1>
+    <p class="page-intro">
+      Short answers to common questions about this project, its data, methods, and findings.
+    </p>
+
+    <section class="section">
+
+      <div class="faq-item open">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          What does this project study?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            It analyzes public New York State court records to describe patterns in criminal case outcomes.
+            It has two parts: one that estimates conviction likelihood from arraignment data, and one that
+            looks at how pretrial release rates changed around bail-law amendments in 2022 and 2023.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          What is OCA-STAT?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            OCA-STAT is a public dataset maintained by the New York State Office of Court Administration.
+            It contains case-level records from criminal arraignments across the state. This project uses
+            OCA-STAT as the main data source for its predictive branch.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          What does the model actually predict?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            It estimates the probability that a criminal case will end in conviction (as opposed to
+            dismissal or acquittal). It uses only information available around the time of arraignment &mdash;
+            things like county, charge severity, arrest type, gender, ethnicity, and race. It does not
+            use any post-arraignment information such as plea negotiations or evidence.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          How accurate is the model?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            The best model correctly classified about 79% of test cases and achieved an AUROC of 0.86
+            (on a scale from 0.5 to 1.0, where higher is better). In practical terms, it is substantially
+            better than guessing and picks up real patterns, but it is not perfect. Accuracy varies across
+            counties (0.52&ndash;0.77 AUROC) and demographic groups.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          What does it show about race?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <p>Race is included as a feature in the model. Conviction rates and model accuracy both vary
+            across racial groups. Three independent adjusted-analysis methods show that non-White defendants
+            have lower conviction rates than White defendants with similar case profiles.</p>
+            <p style="margin-top: 0.5rem;">The Black&ndash;White gap is roughly 2.5&ndash;2.8 percentage points across all methods.
+            However, the public data lacks many important variables (evidence strength, attorney quality,
+            criminal history detail) that could explain these differences. See the
+            <a href="race-analysis.html">full race analysis</a> for details.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          What does it show about bail-law amendments?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            The pretrial branch compares release rates before and after the May 2022 and June 2023
+            bail-law amendments. The largest shift was in firearm-related charges after May 2022,
+            where release rates dropped 20&ndash;32 pp more than for other case types. The June 2023
+            amendment shows smaller differences. See the <a href="pretrial.html">pretrial impact page</a>
+            for interactive charts.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          What are the biggest patterns in the data?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <p><strong>Geography:</strong> NYC courts have a raw conviction rate of about 25%; courts outside
+            NYC have a rate of about 69%. This is the single strongest predictor.</p>
+            <p style="margin-top: 0.5rem;"><strong>Charge severity:</strong> Felonies have a conviction rate of about 66%;
+            violations have a rate of about 25%. These two factors dwarf all others.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          Where does the data come from?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Both datasets are public. The predictive branch uses OCA-STAT arraignment records published by the
+            New York State Office of Court Administration. The pretrial branch uses the DCJS/OCA supplemental
+            pretrial release file published by the Division of Criminal Justice Services. No row-level data
+            is committed to the repository &mdash; only aggregate analysis outputs.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          What are the main limitations?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <ul style="list-style: disc; padding-left: 1.5rem;">
+              <li style="margin-bottom: 0.5rem;">The predictive model only uses information from the time of arraignment.
+              It does not include plea negotiations, evidence, or other post-arraignment factors.</li>
+              <li style="margin-bottom: 0.5rem;">The pretrial analysis is a before-and-after comparison, not a controlled experiment.</li>
+              <li style="margin-bottom: 0.5rem;">Both branches cover New York State only (2021&ndash;2025).</li>
+              <li style="margin-bottom: 0.5rem;">Model accuracy varies by county and demographic group.</li>
+              <li style="margin-bottom: 0.5rem;">About 31% of cases have race recorded as "Unknown."</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          Can this model be used to make legal decisions?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <strong>No.</strong> This project is for research use only. It must not be used for charging,
+            plea bargaining, release, sentencing, supervision, or any individual legal decision. The model
+            describes aggregate patterns in public data; it does not and cannot predict individual case outcomes.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          Is the code open source?
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Yes. The full codebase is available under the MIT License. The pipeline is reproducible:
+            data fetching, dataset building, model training, evaluation, and figure generation are all
+            scripted. See the <a href="methodology.html">methodology page</a> for technical details.
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+    </div>
+  </footer>
+</body>
+</html>

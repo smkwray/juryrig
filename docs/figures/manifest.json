@@ -1,0 +1,12 @@
+{
+  "run_id": "20260307_224037",
+  "figures": {
+    "predictive_metrics": "docs/figures/predictive_metrics.svg",
+    "race_subgroup_auroc": "docs/figures/race_subgroup_auroc.svg",
+    "race_conviction_rates": "docs/figures/race_conviction_rates.svg",
+    "race_adjusted_gaps": "docs/figures/race_adjusted_gaps.svg",
+    "county_extremes_auroc": "docs/figures/county_extremes_auroc.svg",
+    "supplemental_pretrial_release_diffs": "docs/figures/supplemental_pretrial_release_diffs.svg",
+    "supplemental_pretrial_release_trends": "docs/figures/supplemental_pretrial_release_trends.svg"
+  }
+}

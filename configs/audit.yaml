@@ -1,0 +1,8 @@
+protected_attributes:
+  - Race
+  - Ethnicity
+  - Gender
+  - Arrest Age
+report_bins: 10
+county_holdout_min_rows: 50
+

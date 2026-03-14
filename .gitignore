@@ -1,0 +1,36 @@
+.DS_Store
+.env
+.python-version
+.playwright-cli/
+README.html
+README_files/
+do/
+ny_oca_stat_codex_plan_pack/
+
+# Local environments and caches
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.cache/
+__pycache__/
+*.py[cod]
+
+# Local data and generated outputs
+data/
+artifacts/
+
+# Build and packaging
+dist/
+build/
+*.egg-info/
+.tox/
+
+# Coverage
+.coverage
+htmlcov/
+
+# OS and editor noise
+*.swp

@@ -1,0 +1,9 @@
+included_years: all
+maturity_threshold: 0.9
+protected_attribute_mode: include_all
+feature_allowlist: []
+drop_columns:
+  - Row #
+split:
+  validation_fraction: 0.15
+  test_fraction: 0.15

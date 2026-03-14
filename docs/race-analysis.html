@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Race-Adjusted Association &mdash; juryrig</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">jury<span class="logo-accent">rig</span></a>
+      <div class="header-controls">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+        <button id="themeToggle" class="theme-toggle" onclick="juryrigToggleTheme()" aria-label="Toggle theme">&#9790;</button>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="findings.html">Findings</a></li>
+          <li><a href="race-analysis.html" class="active">Race Analysis</a></li>
+          <li><a href="pretrial.html">Pretrial Impact</a></li>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Race and Conviction Likelihood</h1>
+    <p class="page-intro">
+      If we compare cases that look similar on other characteristics, does the defendant's race
+      still correlate with whether the case ends in conviction? Three independent methods all
+      point in the same direction.
+    </p>
+
+    <div class="insight-box">
+      <p><strong>Short answer:</strong> Yes. Across all three approaches, non-White defendants have
+      lower adjusted conviction rates than White defendants with otherwise similar case profiles.
+      The differences are modest but consistent. The Black&ndash;White gap is roughly 2.5&ndash;2.8 pp.</p>
+    </div>
+
+    <!-- Raw Rates -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Raw Conviction Rates</h2>
+        <span class="section-tag">Unadjusted</span>
+      </div>
+
+      <p>Raw conviction rates vary widely by race, but they mix together many confounding factors.
+      White defendants might be concentrated in counties with higher conviction rates, or charged
+      more often with case types that tend to result in conviction.</p>
+
+      <div class="chart-container">
+        <h3>Raw Conviction Rate by Race</h3>
+        <p class="chart-subtitle">Unadjusted rates across 1.6 million arraignment records</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="rawRatesChart"></canvas>
+        </div>
+        <p class="chart-note">These raw rates do not account for differences in case characteristics across groups.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Race Group</th>
+            <th class="num">Conviction Rate</th>
+            <th class="num">Cases</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Asian</td><td class="num">25.1%</td><td class="num">46,882</td></tr>
+          <tr><td>Black</td><td class="num">33.7%</td><td class="num">564,258</td></tr>
+          <tr><td>Indian</td><td class="num">32.5%</td><td class="num">4,719</td></tr>
+          <tr><td>Other</td><td class="num">61.7%</td><td class="num">10,195</td></tr>
+          <tr><td>Unknown</td><td class="num">59.8%</td><td class="num">497,824</td></tr>
+          <tr class="highlight"><td class="highlight">White</td><td class="num highlight">45.7%</td><td class="num highlight">485,374</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Adjusted Analysis -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Adjusted Analysis</h2>
+        <span class="section-tag">Three Methods</span>
+      </div>
+
+      <p>To understand whether race itself is associated with outcomes, we need to compare cases
+      that are similar in other ways. Three complementary approaches were used:</p>
+
+      <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <div class="card">
+          <h4>Core-Adjusted Regression</h4>
+          <p>Logistic regression controlling for county, court type, arrest type, charge severity,
+          age, ethnicity, gender, and arraignment timing.</p>
+        </div>
+        <div class="card">
+          <h4>Charge-Detail Regression</h4>
+          <p>Adds specific law section, charge weight, and attempt flag on top of all core controls.
+          Tests whether the association persists among cases with the same specific charge.</p>
+        </div>
+        <div class="card">
+          <h4>Matched-Strata Comparison</h4>
+          <p>No statistical model. Groups cases into narrow strata sharing the same profile on all
+          variables. Compares conviction rates between race groups only within shared strata.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Adjusted Gaps Chart -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Adjusted Conviction-Rate Gaps</h2>
+        <span class="section-tag">vs. White Reference</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Difference vs. White Defendants (percentage points)</h3>
+        <p class="chart-subtitle">Negative = lower conviction rate than White defendants with similar case profiles</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="adjustedGapsChart"></canvas>
+        </div>
+        <p class="chart-note">All three methods agree in direction. Black&ndash;White gap is 2.6&ndash;2.8 pp across methods.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Race Group</th>
+            <th class="num">Core-Adjusted</th>
+            <th class="num">Charge-Detail</th>
+            <th class="num">Matched Strata</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Asian</td><td class="num">&minus;5.3 pp</td><td class="num">&minus;5.2 pp</td><td class="num">&minus;6.7 pp</td></tr>
+          <tr><td>Black</td><td class="num">&minus;2.7 pp</td><td class="num">&minus;2.8 pp</td><td class="num">&minus;2.6 pp</td></tr>
+          <tr><td>Indian</td><td class="num">&minus;0.6 pp</td><td class="num">&minus;1.9 pp</td><td class="num">&minus;5.3 pp</td></tr>
+          <tr><td>Other</td><td class="num">&minus;8.0 pp</td><td class="num">&minus;5.0 pp</td><td class="num">&minus;5.4 pp</td></tr>
+          <tr><td>Unknown</td><td class="num">+1.8 pp</td><td class="num">&minus;5.9 pp</td><td class="num">&minus;3.1 pp</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Odds Ratios -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Odds Ratios</h2>
+        <span class="section-tag">Regression Coefficients</span>
+      </div>
+
+      <p>Odds ratios below 1.0 mean lower odds of conviction compared to White defendants.
+      Both regression models produce consistent estimates.</p>
+
+      <div class="chart-container">
+        <h3>Odds Ratio vs. White (Reference = 1.0)</h3>
+        <p class="chart-subtitle">Both regression specifications shown. Dotted line = no difference.</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="oddsRatioChart"></canvas>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Race Group</th>
+            <th class="num">Core-Adjusted OR</th>
+            <th class="num">Charge-Detail OR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>White (reference)</td><td class="num">1.000</td><td class="num">1.000</td></tr>
+          <tr><td>Asian</td><td class="num">0.738</td><td class="num">0.717</td></tr>
+          <tr><td>Black</td><td class="num">0.856</td><td class="num">0.835</td></tr>
+          <tr><td>Indian</td><td class="num">0.965</td><td class="num">0.886</td></tr>
+          <tr><td>Other</td><td class="num">0.628</td><td class="num">0.727</td></tr>
+          <tr><td>Unknown</td><td class="num">1.108</td><td class="num">0.686</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- What it means -->
+    <section class="section">
+      <div class="section-header">
+        <h2>What the Analysis Suggests</h2>
+      </div>
+
+      <ul style="list-style: disc; padding-left: 1.5rem; color: var(--color-text-secondary);">
+        <li style="margin-bottom: 0.5rem;"><strong>Race is associated with conviction likelihood even after adjusting for other observable case characteristics.</strong> The association is not an artifact of one particular model specification.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>The direction is consistent:</strong> non-White groups show lower adjusted conviction rates than White defendants with similar case profiles.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>The Black&ndash;White gap is roughly 2.5 to 2.8 percentage points</strong> across methods. The Asian&ndash;White gap is larger, roughly 5 to 7 percentage points.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>The pattern is robust to adding charge-level detail.</strong> Controlling for the specific law section and charge weight does not explain away the race association.</li>
+      </ul>
+    </section>
+
+    <!-- Limitations -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Limitations</h2>
+      </div>
+      <div class="warning-box">
+        <p>
+          <strong>Unmeasured variables:</strong> The public data lacks evidence strength, attorney quality,
+          criminal-history detail, plea dynamics, and pretrial detention status. Any of these could
+          partly or fully explain the adjusted gaps.<br><br>
+          <strong>Large "Unknown" category:</strong> About 31% of cases have race recorded as "Unknown,"
+          which may distort comparisons if recording practices vary by jurisdiction.<br><br>
+          <strong>Observational design:</strong> No adjustment fully substitutes for random assignment.<br><br>
+          <strong>New York only, 2021&ndash;2025.</strong> Results may not generalize to other states or time periods.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+    </div>
+  </footer>
+
+  <script>
+    juryrigChartDefaults();
+
+    // ── Data ──
+    var races = ['Asian', 'Black', 'Indian', 'Other', 'Unknown', 'White'];
+    var rawRates = [0.2508, 0.3373, 0.3246, 0.6168, 0.5982, 0.4570];
+    var rawCounts = [46882, 564258, 4719, 10195, 497824, 485374];
+
+    var gapRaces = ['Asian', 'Black', 'Indian', 'Other', 'Unknown'];
+    var coreGaps = [-5.28, -2.72, -0.62, -8.02, 1.81];
+    var chargeGaps = [-5.18, -2.81, -1.89, -4.96, -5.86];
+    var strataGaps = [-6.72, -2.65, -5.26, -5.45, -3.13];
+
+    var orRaces = ['Asian', 'Black', 'Indian', 'Other', 'Unknown'];
+    var coreOR = [0.738, 0.856, 0.965, 0.628, 1.108];
+    var chargeOR = [0.717, 0.835, 0.886, 0.727, 0.686];
+
+    // ── Chart instances ──
+    var chartInstances = [];
+
+    function buildCharts() {
+      // Destroy any existing charts
+      chartInstances.forEach(function (c) { c.destroy(); });
+      chartInstances = [];
+
+      var C = juryrigColors();
+
+      // ── Raw Rates ──
+      chartInstances.push(new Chart(document.getElementById('rawRatesChart'), {
+        type: 'bar',
+        data: {
+          labels: races,
+          datasets: [{
+            label: 'Conviction Rate',
+            data: rawRates.map(function (r) { return r * 100; }),
+            backgroundColor: C.palette,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (ctx) { return ctx.parsed.y.toFixed(1) + '%'; },
+                afterLabel: function (ctx) { return 'Cases: ' + rawCounts[ctx.dataIndex].toLocaleString(); }
+              }
+            }
+          },
+          scales: {
+            y: { beginAtZero: true, max: 70, ticks: { callback: function (v) { return v + '%'; } }, title: { display: true, text: 'Conviction Rate' } }
+          }
+        }
+      }));
+
+      // ── Adjusted Gaps (grouped bar) ──
+      chartInstances.push(new Chart(document.getElementById('adjustedGapsChart'), {
+        type: 'bar',
+        data: {
+          labels: gapRaces,
+          datasets: [
+            { label: 'Core-Adjusted', data: coreGaps, backgroundColor: C.accent, borderRadius: 4 },
+            { label: 'Charge-Detail', data: chargeGaps, backgroundColor: C.orange, borderRadius: 4 },
+            { label: 'Matched Strata', data: strataGaps, backgroundColor: C.green, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.dataset.label + ': ' + (ctx.parsed.y > 0 ? '+' : '') + ctx.parsed.y.toFixed(1) + ' pp'; } } },
+            annotation: undefined
+          },
+          scales: {
+            y: {
+              title: { display: true, text: 'Difference vs. White (pp)' },
+              ticks: { callback: function (v) { return (v > 0 ? '+' : '') + v; } }
+            }
+          }
+        }
+      }));
+
+      // ── Odds Ratios (lollipop-style horizontal bar) ──
+      chartInstances.push(new Chart(document.getElementById('oddsRatioChart'), {
+        type: 'bar',
+        data: {
+          labels: orRaces,
+          datasets: [
+            { label: 'Core-Adjusted', data: coreOR, backgroundColor: C.accent, borderRadius: 4 },
+            { label: 'Charge-Detail', data: chargeOR, backgroundColor: C.orange, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y',
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.dataset.label + ': ' + ctx.parsed.x.toFixed(3); } } }
+          },
+          scales: {
+            x: {
+              min: 0.5, max: 1.2,
+              title: { display: true, text: 'Odds Ratio (1.0 = no difference vs. White)' }
+            }
+          }
+        }
+      }));
+    }
+
+    buildCharts();
+    window.juryrigRebuildCharts = buildCharts;
+  </script>
+</body>
+</html>

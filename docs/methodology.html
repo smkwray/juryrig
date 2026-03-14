@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Methodology &mdash; juryrig</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">jury<span class="logo-accent">rig</span></a>
+      <div class="header-controls">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+        <button id="themeToggle" class="theme-toggle" onclick="juryrigToggleTheme()" aria-label="Toggle theme">&#9790;</button>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="findings.html">Findings</a></li>
+          <li><a href="race-analysis.html">Race Analysis</a></li>
+          <li><a href="pretrial.html">Pretrial Impact</a></li>
+          <li><a href="methodology.html" class="active">Methodology</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Methodology</h1>
+    <p class="page-intro">
+      Every model, algorithm, library, and configuration used in the juryrig project.
+      All predictive models are scikit-learn classifiers. Python 3.10+, managed via <code>uv</code>.
+    </p>
+
+    <!-- Models -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Models</h2>
+        <span class="section-tag">Scikit-learn</span>
+      </div>
+
+      <h3>1. HistGradientBoostingClassifier (primary)</h3>
+      <p>Histogram-based gradient boosting from scikit-learn. Uses default hyperparameters (no custom tuning).
+      Post-hoc sigmoid calibration applied via <code>CalibratedClassifierCV</code>.</p>
+
+      <table class="data-table">
+        <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Hyperparameters</td><td>scikit-learn defaults</td></tr>
+          <tr><td>Calibration</td><td>sigmoid (Platt scaling) via <code>CalibratedClassifierCV</code>, cv=3</td></tr>
+          <tr><td>Preprocessing</td><td><code>OrdinalEncoder</code> for categorical, <code>SimpleImputer</code> for missing</td></tr>
+          <tr><td>Random state</td><td>7</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. LogisticRegression (baseline)</h3>
+      <p>Linear classifier from scikit-learn.</p>
+
+      <table class="data-table">
+        <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Solver</td><td><code>saga</code></td></tr>
+          <tr><td>max_iter</td><td>2000</td></tr>
+          <tr><td>tol</td><td>1e-3</td></tr>
+          <tr><td>C</td><td>1.0 (default)</td></tr>
+          <tr><td>Preprocessing</td><td><code>MaxAbsScaler</code> + <code>OneHotEncoder</code>, <code>SimpleImputer</code></td></tr>
+          <tr><td>Random state</td><td>7</td></tr>
+        </tbody>
+      </table>
+
+      <h3>3. DummyClassifier (floor baseline)</h3>
+      <p><code>strategy="prior"</code> &mdash; predicts training-set class distribution for every sample. Establishes a performance floor.</p>
+
+      <h3>4. Race-Association Regression Models</h3>
+      <p>Separate logistic regressions used for adjusted race-association analysis (not for prediction):</p>
+
+      <table class="data-table">
+        <thead><tr><th>Specification</th><th>Controls</th><th>Hyperparameters</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Core-adjusted</td>
+            <td>County, charge severity, arrest type, age, gender, ethnicity</td>
+            <td><code>LogisticRegression(max_iter=300, C=1.0, solver="saga", random_state=7)</code></td>
+          </tr>
+          <tr>
+            <td>Charge-detail</td>
+            <td>Core controls + law section, charge weight, attempt flag</td>
+            <td>Same</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Both use <code>OneHotEncoder(drop="first")</code> for categorical encoding.</p>
+    </section>
+
+    <!-- Calibration -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Calibration</h2>
+      </div>
+
+      <p>Calibration is applied to the HistGradientBoostingClassifier only.</p>
+
+      <table class="data-table">
+        <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Method</td><td>Sigmoid (Platt scaling)</td></tr>
+          <tr><td>Cross-validation folds</td><td>3</td></tr>
+          <tr><td>Implementation</td><td>scikit-learn <code>CalibratedClassifierCV</code></td></tr>
+        </tbody>
+      </table>
+
+      <p>Calibration evaluation uses 10 quantile-based bins (<code>pd.qcut</code>) to compute bin-wise
+      average predictions vs. average outcomes.</p>
+    </section>
+
+    <!-- Metrics -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Evaluation Metrics</h2>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Metric</th><th>Role</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Accuracy</strong></td><td>Primary classification</td><td>Share of cases classified correctly</td></tr>
+          <tr><td><strong>AUROC</strong></td><td>Ranking quality</td><td>Area under the ROC curve</td></tr>
+          <tr><td><strong>PR-AUC</strong></td><td>Positive-class ranking</td><td>Area under the precision-recall curve</td></tr>
+          <tr><td><strong>Brier Score</strong></td><td>Calibration quality</td><td>Mean squared error of predicted probabilities (lower is better)</td></tr>
+        </tbody>
+      </table>
+
+      <p>Model selection uses Brier score on the evaluation split. Subgroup metrics computed by
+      Race, Ethnicity, Gender, age_bucket, and Region.</p>
+    </section>
+
+    <!-- Feature Policy -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Feature Policy</h2>
+      </div>
+
+      <p>19 features from OCA-STAT arraignment-time fields. The default configuration (<code>include_all</code>)
+      includes Gender, Ethnicity, and Race.</p>
+
+      <h4>Target</h4>
+      <table class="data-table">
+        <thead><tr><th>Category</th><th>Values</th></tr></thead>
+        <tbody>
+          <tr><td class="highlight">Positive</td><td><code>Plea</code>, <code>Verdict-TFG</code></td></tr>
+          <tr><td class="highlight">Negative</td><td><code>Dismissed</code>, <code>Dism-ACD</code>, <code>Verdict-ACQ</code></td></tr>
+          <tr><td>Excluded</td><td>Pending, warrant, transfer, other, unknown states</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Leakage-Excluded Fields</h4>
+      <p>Outcome and post-arraignment fields excluded from features:</p>
+      <ul style="list-style: disc; padding-left: 1.5rem; color: var(--color-text-secondary);">
+        <li>Docket Status</li>
+        <li>Disposition Type / Detail</li>
+        <li>Dismissal Reason</li>
+        <li>Most Severe Sentence</li>
+        <li>Fines / Fees / Surcharges Imposed</li>
+      </ul>
+
+      <h4>Feature List</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.25rem; margin-top: 0.75rem;">
+        <code>Court Type</code><code>Region</code><code>District</code><code>County</code><code>Court</code>
+        <code>Arresting Agency</code><code>Arrest Type</code><code>Arraign Year</code><code>Arraign Month</code>
+        <code>Top Charge at Arraignment</code><code>Severity</code><code>Weight</code><code>Law</code>
+        <code>Article.Section</code><code>Attempt Flag</code><code>Gender</code><code>Ethnicity</code>
+        <code>Race</code><code>Arrest Age</code>
+      </div>
+    </section>
+
+    <!-- Data -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Data Sources</h2>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Dataset</th><th>Source</th><th>Grain</th><th>Coverage</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="highlight">OCA-STAT</td>
+            <td>NY Office of Court Administration</td>
+            <td>One defendant-docket</td>
+            <td>2021&ndash;2025, monthly refresh</td>
+          </tr>
+          <tr>
+            <td class="highlight">DCJS/OCA Supplemental Pretrial</td>
+            <td>NY Division of Criminal Justice Services / OCA</td>
+            <td>One criminal cycle</td>
+            <td>2019&ndash;2024 (Oct 2025 release)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Both datasets are public. Raw CSVs and processed outputs are not committed to the repository;
+      only aggregate analysis results are published.</p>
+    </section>
+
+    <!-- Libraries -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Libraries</h2>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Library</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>scikit-learn</code></td><td>All classifiers, calibration, preprocessing, metrics</td></tr>
+          <tr><td><code>pandas</code></td><td>Data manipulation and feature engineering</td></tr>
+          <tr><td><code>numpy</code></td><td>Numerical operations</td></tr>
+          <tr><td><code>pyarrow</code></td><td>Parquet data storage</td></tr>
+          <tr><td><code>matplotlib</code></td><td>Figure generation (SVG output)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Model Card -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Model Card</h2>
+        <span class="section-tag">Reference Run</span>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Snapshot date</td><td><code>2026-03-07</code></td></tr>
+          <tr><td>Run ID</td><td><code>20260307_224037</code></td></tr>
+          <tr><td>Modeled rows</td><td>1,609,252</td></tr>
+          <tr><td>Test rows</td><td>271,701</td></tr>
+          <tr><td>Feature count</td><td>19</td></tr>
+          <tr><td>Maturity threshold</td><td>&ge; 90% disposed share by cohort</td></tr>
+          <tr><td>Best model</td><td>HistGradientBoostingClassifier</td></tr>
+          <tr><td>Best AUROC</td><td>0.8644</td></tr>
+          <tr><td>Best Brier</td><td>0.1496</td></tr>
+        </tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+    </div>
+  </footer>
+</body>
+</html>

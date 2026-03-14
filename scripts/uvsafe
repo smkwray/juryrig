@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ENV_FILE="$ROOT_DIR/.env"
+
+if [[ -f "$ENV_FILE" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set +a
+fi
+
+: "${PROJECT_VENV_ROOT:=${HOME}/venvs/juryrig}"
+: "${UV_PROJECT_ENVIRONMENT:=$PROJECT_VENV_ROOT}"
+: "${PYTHONDONTWRITEBYTECODE:=1}"
+: "${PYTHONPYCACHEPREFIX:=/tmp/juryrig-pycache}"
+: "${PYTEST_ADDOPTS:=-p no:cacheprovider}"
+: "${UV_CACHE_DIR:=/tmp/uv-cache-juryrig}"
+: "${RUFF_CACHE_DIR:=/tmp/ruff-cache-juryrig}"
+: "${WINEPREFIX:=$HOME/.wine-juryrig}"
+
+export PROJECT_VENV_ROOT
+export UV_PROJECT_ENVIRONMENT
+export PYTHONDONTWRITEBYTECODE
+export PYTHONPYCACHEPREFIX
+export PYTEST_ADDOPTS
+export UV_CACHE_DIR
+export RUFF_CACHE_DIR
+export WINEPREFIX
+
+mkdir -p "$(dirname "$UV_PROJECT_ENVIRONMENT")" "$UV_CACHE_DIR" "$RUFF_CACHE_DIR"
+
+case "${1:-}" in
+  sync|lock|pip|venv|tree|export|build)
+    exec uv "$@"
+    ;;
+  *)
+    exec uv run "$@"
+    ;;
+esac

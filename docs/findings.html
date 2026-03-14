@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Predictive Findings &mdash; juryrig</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">jury<span class="logo-accent">rig</span></a>
+      <div class="header-controls">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+        <button id="themeToggle" class="theme-toggle" onclick="juryrigToggleTheme()" aria-label="Toggle theme">&#9790;</button>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="findings.html" class="active">Findings</a></li>
+          <li><a href="race-analysis.html">Race Analysis</a></li>
+          <li><a href="pretrial.html">Pretrial Impact</a></li>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Predictive Branch: Findings</h1>
+    <p class="page-intro">
+      Using 1.6 million public arraignment records (2021&ndash;2025), three classifiers estimate
+      conviction likelihood from arraignment-time features. The best model reaches AUROC 0.86 on
+      a held-out test set of 271,701 cases.
+    </p>
+
+    <!-- Model Comparison -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Model Performance</h2>
+        <span class="section-tag">3 Classifiers</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Metrics Across Classifiers</h3>
+        <p class="chart-subtitle">Evaluated on 271,701 held-out test cases. All models use the same 19-feature set.</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="modelCompChart"></canvas>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th class="num">Accuracy</th>
+            <th class="num">AUROC</th>
+            <th class="num">PR-AUC</th>
+            <th class="num">Brier</th>
+            <th class="num">Log Loss</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dummy (prior)</td>
+            <td class="num">0.5684</td>
+            <td class="num">0.5000</td>
+            <td class="num">0.4316</td>
+            <td class="num">0.2461</td>
+            <td class="num">0.6854</td>
+          </tr>
+          <tr>
+            <td>Logistic Regression</td>
+            <td class="num">0.7688</td>
+            <td class="num">0.8465</td>
+            <td class="num">0.8148</td>
+            <td class="num">0.1569</td>
+            <td class="num">0.4783</td>
+          </tr>
+          <tr class="highlight">
+            <td class="highlight">Hist. Gradient Boosting</td>
+            <td class="num highlight">0.7861</td>
+            <td class="num highlight">0.8644</td>
+            <td class="num highlight">0.8302</td>
+            <td class="num highlight">0.1496</td>
+            <td class="num highlight">0.4615</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Calibration -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Calibration</h2>
+        <span class="section-tag">Reliability Curve</span>
+      </div>
+
+      <p>A well-calibrated model's predicted probabilities should match observed outcome rates.
+      The chart below compares the model's average prediction in each quantile bin against
+      the actual conviction rate in that bin.</p>
+
+      <div class="chart-container">
+        <h3>Calibration Curve (Hist. Gradient Boosting)</h3>
+        <p class="chart-subtitle">8 quantile bins. Points close to the diagonal indicate good calibration.</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="calibrationChart"></canvas>
+        </div>
+        <p class="chart-note">Post-hoc sigmoid (Platt) calibration applied via CalibratedClassifierCV with 3-fold CV.</p>
+      </div>
+    </section>
+
+    <!-- Subgroup Performance -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Subgroup Performance</h2>
+        <span class="section-tag">Fairness Audit</span>
+      </div>
+
+      <p>Model accuracy varies across demographic groups and regions. The charts below show AUROC
+      for each subgroup. Higher AUROC means the model ranks cases more accurately within that group.</p>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-race')">Race</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-ethnicity')">Ethnicity</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-gender')">Gender</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-age')">Age</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-region')">Region</button>
+      </div>
+
+      <div id="tab-race" class="tab-panel active">
+        <div class="chart-container">
+          <h3>AUROC by Race</h3>
+          <p class="chart-subtitle">Ranking quality varies across racial groups</p>
+          <div class="chart-canvas-wrap">
+            <canvas id="raceAurocChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-ethnicity" class="tab-panel">
+        <div class="chart-container">
+          <h3>AUROC by Ethnicity</h3>
+          <div class="chart-canvas-wrap">
+            <canvas id="ethnicityAurocChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-gender" class="tab-panel">
+        <div class="chart-container">
+          <h3>AUROC by Gender</h3>
+          <div class="chart-canvas-wrap">
+            <canvas id="genderAurocChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-age" class="tab-panel">
+        <div class="chart-container">
+          <h3>AUROC by Age Group</h3>
+          <div class="chart-canvas-wrap">
+            <canvas id="ageAurocChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-region" class="tab-panel">
+        <div class="chart-container">
+          <h3>AUROC by Region</h3>
+          <div class="chart-canvas-wrap">
+            <canvas id="regionAurocChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-box">
+        <p><strong>Notable:</strong> The model's ranking quality (AUROC) varies substantially across race groups &mdash;
+        from 0.69 (Asian) to 0.77 (White). The NYC vs. non-NYC region split also shows very different
+        positive rates (23% vs. 69%) despite similar AUROC values.</p>
+      </div>
+
+      <!-- Full subgroup table -->
+      <details style="margin-top: 1rem;">
+        <summary style="cursor: pointer; font-weight: 600; color: var(--color-accent);">Full subgroup metrics table</summary>
+        <div style="overflow-x: auto; margin-top: 1rem;">
+          <table class="data-table" id="subgroupTable">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Value</th>
+                <th class="num">Cases</th>
+                <th class="num">Positive Rate</th>
+                <th class="num">Accuracy</th>
+                <th class="num">AUROC</th>
+                <th class="num">PR-AUC</th>
+                <th class="num">Brier</th>
+              </tr>
+            </thead>
+            <tbody id="subgroupTableBody"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <!-- County Performance -->
+    <section class="section">
+      <div class="section-header">
+        <h2>County-Level Performance</h2>
+        <span class="section-tag">61 Counties</span>
+      </div>
+
+      <p>Model accuracy varies substantially across New York's 61 counties. Some counties are much easier
+      for the model to predict than others. This chart shows AUROC for every county, sorted from highest to lowest.</p>
+
+      <div class="chart-container">
+        <h3>AUROC by County</h3>
+        <p class="chart-subtitle">Hover for details. Counties with more cases shown in darker color.</p>
+        <div class="chart-canvas-wrap very-tall">
+          <canvas id="countyChart"></canvas>
+        </div>
+        <p class="chart-note">Bar color intensity reflects log-scaled case count. Monroe (n=16,629) leads at 0.77; Schoharie (n=693) trails at 0.52.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+    </div>
+  </footer>
+
+  <script>
+    juryrigChartDefaults();
+
+    // ── Tab switching ──
+    function switchTab(e, tabId) {
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      e.target.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // ── Subgroup data ──
+    var subgroups = [
+      {col:'Race',val:'Asian',n:31230,pos:0.2369,acc:0.7840,auroc:0.6849,prauc:0.4308,brier:0.1768},
+      {col:'Race',val:'Black',n:297336,pos:0.3030,acc:0.7525,auroc:0.7354,prauc:0.5656,brier:0.1804},
+      {col:'Race',val:'Indian',n:3243,pos:0.2979,acc:0.7709,auroc:0.7538,prauc:0.5993,brier:0.1740},
+      {col:'Race',val:'Other',n:6261,pos:0.6358,acc:0.6189,auroc:0.7091,prauc:0.8178,brier:0.2017},
+      {col:'Race',val:'Unknown',n:243624,pos:0.6325,acc:0.6425,auroc:0.7536,prauc:0.8302,brier:0.1870},
+      {col:'Race',val:'White',n:233409,pos:0.4082,acc:0.7101,auroc:0.7654,prauc:0.6958,brier:0.1868},
+      {col:'Ethnicity',val:'Hispanic',n:173538,pos:0.3133,acc:0.7448,auroc:0.7354,prauc:0.5779,brier:0.1828},
+      {col:'Ethnicity',val:'Non-Hispanic',n:318768,pos:0.4136,acc:0.6954,auroc:0.7433,prauc:0.6778,brier:0.1953},
+      {col:'Ethnicity',val:'Unknown',n:322797,pos:0.5131,acc:0.7001,auroc:0.8069,prauc:0.7978,brier:0.1740},
+      {col:'Gender',val:'Female',n:168027,pos:0.4272,acc:0.7109,auroc:0.7814,prauc:0.7227,brier:0.1827},
+      {col:'Gender',val:'Male',n:612234,pos:0.4339,acc:0.7047,auroc:0.7754,prauc:0.7232,brier:0.1857},
+      {col:'Gender',val:'Unknown',n:34842,pos:0.4141,acc:0.7473,auroc:0.8268,prauc:0.7567,brier:0.1644},
+      {col:'age_bucket',val:'<18',n:5673,pos:0.2586,acc:0.8054,auroc:0.8430,prauc:0.6318,brier:0.1515},
+      {col:'age_bucket',val:'18-24',n:130392,pos:0.3840,acc:0.7359,auroc:0.7907,prauc:0.7053,brier:0.1760},
+      {col:'age_bucket',val:'25-34',n:255243,pos:0.4161,acc:0.7150,auroc:0.7793,prauc:0.7138,brier:0.1828},
+      {col:'age_bucket',val:'35-44',n:197544,pos:0.4473,acc:0.6973,auroc:0.7722,prauc:0.7293,brier:0.1879},
+      {col:'age_bucket',val:'45-54',n:103743,pos:0.4586,acc:0.6871,auroc:0.7644,prauc:0.7273,brier:0.1916},
+      {col:'age_bucket',val:'55-64',n:60732,pos:0.4613,acc:0.6757,auroc:0.7509,prauc:0.7160,brier:0.1963},
+      {col:'age_bucket',val:'65+',n:18594,pos:0.4274,acc:0.7022,auroc:0.7737,prauc:0.7171,brier:0.1871},
+      {col:'age_bucket',val:'unknown',n:43182,pos:0.5135,acc:0.7118,auroc:0.8224,prauc:0.8136,brier:0.1685},
+      {col:'Region',val:'NYC',n:463938,pos:0.2337,acc:0.7859,auroc:0.6962,prauc:0.4245,brier:0.1732},
+      {col:'Region',val:'ONYC',n:351165,pos:0.6932,acc:0.6046,auroc:0.6946,prauc:0.8389,brier:0.1987}
+    ];
+
+    // Populate subgroup table (runs once)
+    var tbody = document.getElementById('subgroupTableBody');
+    subgroups.forEach(function(s) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + s.col + '</td><td>' + s.val + '</td><td class="num">' + s.n.toLocaleString() + '</td>' +
+        '<td class="num">' + (s.pos*100).toFixed(1) + '%</td><td class="num">' + (s.acc*100).toFixed(1) + '%</td>' +
+        '<td class="num">' + s.auroc.toFixed(4) + '</td><td class="num">' + s.prauc.toFixed(4) + '</td>' +
+        '<td class="num">' + s.brier.toFixed(4) + '</td>';
+      tbody.appendChild(tr);
+    });
+
+    // ── County data ──
+    var counties = [
+      {name:'Monroe',auroc:0.7684,n:16629},{name:'Queens',auroc:0.7233,n:114330},{name:'Orange',auroc:0.7090,n:13638},
+      {name:'Other',auroc:0.7091,n:6261},{name:'Nassau',auroc:0.7069,n:51288},{name:'Putnam',auroc:0.7009,n:1596},
+      {name:'Ulster',auroc:0.7008,n:4974},{name:'Onondaga',auroc:0.6930,n:15237},{name:'Erie',auroc:0.6956,n:29325},
+      {name:'Rockland',auroc:0.6900,n:4845},{name:'New York',auroc:0.6896,n:106383},{name:'Richmond',auroc:0.6875,n:21387},
+      {name:'Broome',auroc:0.6879,n:7443},{name:'Delaware',auroc:0.6790,n:996},
+      {name:'Bronx',auroc:0.6725,n:78264},{name:'Niagara',auroc:0.6694,n:10425},
+      {name:'Suffolk',auroc:0.6692,n:49020},{name:'Dutchess',auroc:0.6616,n:6393},
+      {name:'Tompkins',auroc:0.6583,n:2760},{name:'Tioga',auroc:0.6589,n:705},
+      {name:'Saratoga',auroc:0.6576,n:6222},{name:'Oswego',auroc:0.6559,n:4449},
+      {name:'Albany',auroc:0.6524,n:11001},{name:'Columbia',auroc:0.6510,n:1506},
+      {name:'Schuyler',auroc:0.6523,n:516},{name:'Kings',auroc:0.6494,n:143574},
+      {name:'Westchester',auroc:0.6410,n:25221},{name:'Madison',auroc:0.6400,n:1812},
+      {name:'Clinton',auroc:0.6373,n:3261},{name:'Sullivan',auroc:0.6374,n:1872},
+      {name:'Fulton',auroc:0.6363,n:2226},{name:'Greene',auroc:0.6306,n:1557},
+      {name:'Oneida',auroc:0.6321,n:9525},{name:'Chenango',auroc:0.6292,n:1482},
+      {name:'Genesee',auroc:0.6285,n:2274},{name:'Rensselaer',auroc:0.6285,n:3915},
+      {name:'St. Lawrence',auroc:0.6248,n:2637},{name:'Warren',auroc:0.6231,n:3237},
+      {name:'Cayuga',auroc:0.6226,n:2256},{name:'Cattaraugus',auroc:0.6218,n:3735},
+      {name:'Schenectady',auroc:0.6200,n:6831},{name:'Seneca',auroc:0.5806,n:1002},
+      {name:'Yates',auroc:0.6140,n:348},{name:'Ontario',auroc:0.6139,n:2601},
+      {name:'Wayne',auroc:0.6129,n:1731},{name:'Otsego',auroc:0.6125,n:1482},
+      {name:'Chautauqua',auroc:0.6045,n:6915},{name:'Chemung',auroc:0.6037,n:3843},
+      {name:'Steuben',auroc:0.5998,n:3003},{name:'Wyoming',auroc:0.5972,n:855},
+      {name:'Washington',auroc:0.5940,n:1542},{name:'Lewis',auroc:0.5919,n:333},
+      {name:'Allegany',auroc:0.6205,n:984},{name:'Livingston',auroc:0.5872,n:1374},
+      {name:'Montgomery',auroc:0.5827,n:2505},{name:'Herkimer',auroc:0.5719,n:1428},
+      {name:'Jefferson',auroc:0.5681,n:4410},{name:'Orleans',auroc:0.5680,n:834},
+      {name:'Essex',auroc:0.5609,n:786},{name:'Cortland',auroc:0.5464,n:2598},
+      {name:'Franklin',auroc:0.5448,n:1041},{name:'Schoharie',auroc:0.5155,n:693}
+    ].sort(function(a, b) { return b.auroc - a.auroc; });
+
+    var maxN = Math.max.apply(null, counties.map(function(c) { return c.n; }));
+
+    // ── Chart instances for destroy/rebuild ──
+    var chartInstances = [];
+
+    function buildCharts() {
+      // Destroy existing charts
+      chartInstances.forEach(function(ch) { ch.destroy(); });
+      chartInstances = [];
+
+      var C = juryrigColors();
+
+      // ── Model Comparison ──
+      chartInstances.push(new Chart(document.getElementById('modelCompChart'), {
+        type: 'bar',
+        data: {
+          labels: ['AUROC', 'PR-AUC', 'Accuracy', 'Brier Score', 'Log Loss'],
+          datasets: [
+            { label: 'Dummy', data: [0.5, 0.4316, 0.5684, 0.2461, 0.6854], backgroundColor: C.muted, borderRadius: 4 },
+            { label: 'Logistic Regression', data: [0.8465, 0.8148, 0.7688, 0.1569, 0.4783], backgroundColor: C.accent, borderRadius: 4 },
+            { label: 'Hist. Gradient Boosting', data: [0.8644, 0.8302, 0.7861, 0.1496, 0.4615], backgroundColor: C.navy, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(4); } } } },
+          scales: { y: { beginAtZero: true, max: 1 } }
+        }
+      }));
+
+      // ── Calibration Curve ──
+      var calPred = [0.0725, 0.1684, 0.2767, 0.4496, 0.4608, 0.5541, 0.7208, 0.9006];
+      var calObs  = [0.0527, 0.1361, 0.2517, 0.4217, 0.4790, 0.5349, 0.7316, 0.9220];
+
+      chartInstances.push(new Chart(document.getElementById('calibrationChart'), {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Perfect Calibration',
+              data: [{x:0,y:0},{x:1,y:1}],
+              type: 'line',
+              borderColor: C.muted,
+              borderDash: [6, 4],
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false
+            },
+            {
+              label: 'Model Calibration',
+              data: calPred.map(function(p, i) { return {x: p, y: calObs[i]}; }),
+              borderColor: C.accent,
+              backgroundColor: C.accent,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+              showLine: true,
+              borderWidth: 2,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          aspectRatio: 1.2,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  return ctx.dataset.label === 'Perfect Calibration' ? '' :
+                    'Predicted: ' + ctx.parsed.x.toFixed(3) + ', Observed: ' + ctx.parsed.y.toFixed(3);
+                }
+              }
+            }
+          },
+          scales: {
+            x: { title: { display: true, text: 'Mean Predicted Probability' }, min: 0, max: 1 },
+            y: { title: { display: true, text: 'Observed Conviction Rate' }, min: 0, max: 1 }
+          }
+        }
+      }));
+
+      // Race AUROC chart
+      var raceData = subgroups.filter(function(s) { return s.col === 'Race'; });
+      chartInstances.push(new Chart(document.getElementById('raceAurocChart'), {
+        type: 'bar',
+        data: {
+          labels: raceData.map(function(s) { return s.val; }),
+          datasets: [{
+            label: 'AUROC',
+            data: raceData.map(function(s) { return s.auroc; }),
+            backgroundColor: raceData.map(function(s, i) { return C.palette[i]; }),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                afterLabel: function(ctx) {
+                  var s = raceData[ctx.dataIndex];
+                  return 'Cases: ' + s.n.toLocaleString() + '\nPositive rate: ' + (s.pos*100).toFixed(1) + '%';
+                }
+              }
+            }
+          },
+          scales: { x: { min: 0.5, max: 0.9, title: { display: true, text: 'AUROC' } } }
+        }
+      }));
+
+      // Ethnicity AUROC chart
+      var ethData = subgroups.filter(function(s) { return s.col === 'Ethnicity'; });
+      chartInstances.push(new Chart(document.getElementById('ethnicityAurocChart'), {
+        type: 'bar',
+        data: {
+          labels: ethData.map(function(s) { return s.val; }),
+          datasets: [{ label: 'AUROC', data: ethData.map(function(s) { return s.auroc; }), backgroundColor: C.palette.slice(0,3), borderRadius: 4 }]
+        },
+        options: {
+          responsive: true, indexAxis: 'y',
+          plugins: { legend: { display: false }, tooltip: { callbacks: { afterLabel: function(ctx) { return 'Cases: ' + ethData[ctx.dataIndex].n.toLocaleString(); } } } },
+          scales: { x: { min: 0.5, max: 0.9, title: { display: true, text: 'AUROC' } } }
+        }
+      }));
+
+      // Gender AUROC chart
+      var genData = subgroups.filter(function(s) { return s.col === 'Gender'; });
+      chartInstances.push(new Chart(document.getElementById('genderAurocChart'), {
+        type: 'bar',
+        data: {
+          labels: genData.map(function(s) { return s.val; }),
+          datasets: [{ label: 'AUROC', data: genData.map(function(s) { return s.auroc; }), backgroundColor: C.palette.slice(0,3), borderRadius: 4 }]
+        },
+        options: {
+          responsive: true, indexAxis: 'y',
+          plugins: { legend: { display: false }, tooltip: { callbacks: { afterLabel: function(ctx) { return 'Cases: ' + genData[ctx.dataIndex].n.toLocaleString(); } } } },
+          scales: { x: { min: 0.5, max: 0.9, title: { display: true, text: 'AUROC' } } }
+        }
+      }));
+
+      // Age AUROC chart
+      var ageData = subgroups.filter(function(s) { return s.col === 'age_bucket'; });
+      chartInstances.push(new Chart(document.getElementById('ageAurocChart'), {
+        type: 'bar',
+        data: {
+          labels: ageData.map(function(s) { return s.val; }),
+          datasets: [{ label: 'AUROC', data: ageData.map(function(s) { return s.auroc; }), backgroundColor: C.palette.slice(0, ageData.length), borderRadius: 4 }]
+        },
+        options: {
+          responsive: true, indexAxis: 'y',
+          plugins: { legend: { display: false }, tooltip: { callbacks: { afterLabel: function(ctx) { return 'Cases: ' + ageData[ctx.dataIndex].n.toLocaleString(); } } } },
+          scales: { x: { min: 0.5, max: 0.9, title: { display: true, text: 'AUROC' } } }
+        }
+      }));
+
+      // Region AUROC chart
+      var regData = subgroups.filter(function(s) { return s.col === 'Region'; });
+      chartInstances.push(new Chart(document.getElementById('regionAurocChart'), {
+        type: 'bar',
+        data: {
+          labels: regData.map(function(s) { return s.val === 'ONYC' ? 'Outside NYC' : s.val; }),
+          datasets: [
+            { label: 'AUROC', data: regData.map(function(s) { return s.auroc; }), backgroundColor: [C.accent, C.navy], borderRadius: 4 },
+            { label: 'Positive Rate', data: regData.map(function(s) { return s.pos; }), backgroundColor: [C.accent + '55', C.navy + '55'], borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { callbacks: { afterLabel: function(ctx) { return 'Cases: ' + regData[ctx.dataIndex].n.toLocaleString(); } } }
+          },
+          scales: { y: { beginAtZero: true, max: 1 } }
+        }
+      }));
+
+      // ── County Chart ──
+      var countyColors = counties.map(function(c) {
+        var intensity = 0.3 + 0.7 * (Math.log(c.n) / Math.log(maxN));
+        return C.accent + Math.round(intensity * 255).toString(16).padStart(2, '0');
+      });
+
+      chartInstances.push(new Chart(document.getElementById('countyChart'), {
+        type: 'bar',
+        data: {
+          labels: counties.map(function(c) { return c.name; }),
+          datasets: [{
+            label: 'AUROC',
+            data: counties.map(function(c) { return c.auroc; }),
+            backgroundColor: countyColors,
+            borderRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return 'AUROC: ' + ctx.parsed.x.toFixed(4); },
+                afterLabel: function(ctx) { return 'Cases: ' + counties[ctx.dataIndex].n.toLocaleString(); }
+              }
+            }
+          },
+          scales: {
+            x: { min: 0.5, max: 0.8, title: { display: true, text: 'AUROC' } },
+            y: { ticks: { font: { size: 11 } } }
+          }
+        }
+      }));
+    }
+
+    // Build charts on initial load
+    buildCharts();
+
+    // Expose rebuild hook for theme toggling
+    window.juryrigRebuildCharts = function() { juryrigChartDefaults(); buildCharts(); };
+  </script>
+</body>
+</html>
