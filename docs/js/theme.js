@@ -21,7 +21,7 @@
   }
 
   // Apply immediately (before DOM ready) to prevent flash
-  var initial = getSavedTheme() || getSystemTheme();
+  var initial = getSavedTheme() || 'light';
   applyTheme(initial);
 
   // Listen for system changes
