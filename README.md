@@ -1,5 +1,7 @@
 # juryrig
 
+**[Browse the interactive results site](https://smkwray.github.io/juryrig/)**
+
 An analysis of New York public court records. Using ~1.6 million OCA-STAT arraignment records and ~854,000 supplemental pretrial cases, this project examines conviction patterns and pretrial release-rate shifts around bail-law amendments. The best predictive model reaches **0.86 AUROC** and **79% accuracy** on a held-out test set of 271,701 cases. The clearest pretrial finding: firearm charges newly eligible for detention after May 2022 saw release-rate drops of **20–32 percentage points** relative to comparison cases. Geography is the single strongest split — NYC courts show a 24.8% conviction rate vs. 68.7% outside NYC.
 
 ## Start here
