@@ -47,7 +47,7 @@
 
       <div class="chart-container">
         <h3>Metrics Across Classifiers</h3>
-        <p class="chart-subtitle">Evaluated on 271,701 held-out test cases. All models use the same 19-feature set.</p>
+        <p class="chart-subtitle">Evaluated on 271,701 held-out test cases. All models use the same 16-feature set (protected attributes excluded by default).</p>
         <div class="chart-canvas-wrap">
           <canvas id="modelCompChart"></canvas>
         </div>
@@ -73,21 +73,21 @@
             <td class="num">0.2461</td>
             <td class="num">0.6854</td>
           </tr>
-          <tr>
-            <td>Logistic Regression</td>
-            <td class="num">0.7688</td>
-            <td class="num">0.8465</td>
-            <td class="num">0.8148</td>
-            <td class="num">0.1569</td>
-            <td class="num">0.4783</td>
-          </tr>
           <tr class="highlight">
-            <td class="highlight">Hist. Gradient Boosting</td>
-            <td class="num highlight">0.7861</td>
-            <td class="num highlight">0.8644</td>
-            <td class="num highlight">0.8302</td>
-            <td class="num highlight">0.1496</td>
-            <td class="num highlight">0.4615</td>
+            <td class="highlight">Logistic Regression</td>
+            <td class="num highlight">0.7818</td>
+            <td class="num highlight">0.8643</td>
+            <td class="num highlight">0.8364</td>
+            <td class="num highlight">0.1474</td>
+            <td class="num highlight">0.4523</td>
+          </tr>
+          <tr>
+            <td>Hist. Gradient Boosting</td>
+            <td class="num">0.7847</td>
+            <td class="num">0.8639</td>
+            <td class="num">0.8314</td>
+            <td class="num">0.1499</td>
+            <td class="num">0.4620</td>
           </tr>
         </tbody>
       </table>
@@ -106,7 +106,7 @@
 
       <div class="chart-container">
         <h3>Calibration Curve (Hist. Gradient Boosting)</h3>
-        <p class="chart-subtitle">8 quantile bins. Points close to the diagonal indicate good calibration.</p>
+        <p class="chart-subtitle">10 quantile bins. Points close to the diagonal indicate good calibration.</p>
         <div class="chart-canvas-wrap">
           <canvas id="calibrationChart"></canvas>
         </div>
@@ -180,7 +180,7 @@
 
       <div class="insight-box">
         <p><strong>Notable:</strong> The model's ranking quality (AUROC) varies substantially across race groups &mdash;
-        from 0.69 (Asian) to 0.77 (White). The NYC vs. non-NYC region split also shows very different
+        from 0.77 (Asian) to 0.86 (White). The NYC vs. non-NYC region split also shows very different
         positive rates (23% vs. 69%) despite similar AUROC values.</p>
       </div>
 
@@ -223,7 +223,7 @@
         <div class="chart-canvas-wrap very-tall">
           <canvas id="countyChart"></canvas>
         </div>
-        <p class="chart-note">Bar color intensity reflects log-scaled case count. Monroe (n=16,629) leads at 0.77; Schoharie (n=693) trails at 0.52.</p>
+        <p class="chart-note">Bar color intensity reflects log-scaled case count. Putnam (n=532) leads at 0.88; Schoharie (n=231) trails at 0.52.</p>
       </div>
     </section>
 
@@ -232,7 +232,7 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
-      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260320_231413</code></span>
     </div>
   </footer>
 
@@ -249,28 +249,28 @@
 
     // ── Subgroup data ──
     var subgroups = [
-      {col:'Race',val:'Asian',n:31230,pos:0.2369,acc:0.7840,auroc:0.6849,prauc:0.4308,brier:0.1768},
-      {col:'Race',val:'Black',n:297336,pos:0.3030,acc:0.7525,auroc:0.7354,prauc:0.5656,brier:0.1804},
-      {col:'Race',val:'Indian',n:3243,pos:0.2979,acc:0.7709,auroc:0.7538,prauc:0.5993,brier:0.1740},
-      {col:'Race',val:'Other',n:6261,pos:0.6358,acc:0.6189,auroc:0.7091,prauc:0.8178,brier:0.2017},
-      {col:'Race',val:'Unknown',n:243624,pos:0.6325,acc:0.6425,auroc:0.7536,prauc:0.8302,brier:0.1870},
-      {col:'Race',val:'White',n:233409,pos:0.4082,acc:0.7101,auroc:0.7654,prauc:0.6958,brier:0.1868},
-      {col:'Ethnicity',val:'Hispanic',n:173538,pos:0.3133,acc:0.7448,auroc:0.7354,prauc:0.5779,brier:0.1828},
-      {col:'Ethnicity',val:'Non-Hispanic',n:318768,pos:0.4136,acc:0.6954,auroc:0.7433,prauc:0.6778,brier:0.1953},
-      {col:'Ethnicity',val:'Unknown',n:322797,pos:0.5131,acc:0.7001,auroc:0.8069,prauc:0.7978,brier:0.1740},
-      {col:'Gender',val:'Female',n:168027,pos:0.4272,acc:0.7109,auroc:0.7814,prauc:0.7227,brier:0.1827},
-      {col:'Gender',val:'Male',n:612234,pos:0.4339,acc:0.7047,auroc:0.7754,prauc:0.7232,brier:0.1857},
-      {col:'Gender',val:'Unknown',n:34842,pos:0.4141,acc:0.7473,auroc:0.8268,prauc:0.7567,brier:0.1644},
-      {col:'age_bucket',val:'<18',n:5673,pos:0.2586,acc:0.8054,auroc:0.8430,prauc:0.6318,brier:0.1515},
-      {col:'age_bucket',val:'18-24',n:130392,pos:0.3840,acc:0.7359,auroc:0.7907,prauc:0.7053,brier:0.1760},
-      {col:'age_bucket',val:'25-34',n:255243,pos:0.4161,acc:0.7150,auroc:0.7793,prauc:0.7138,brier:0.1828},
-      {col:'age_bucket',val:'35-44',n:197544,pos:0.4473,acc:0.6973,auroc:0.7722,prauc:0.7293,brier:0.1879},
-      {col:'age_bucket',val:'45-54',n:103743,pos:0.4586,acc:0.6871,auroc:0.7644,prauc:0.7273,brier:0.1916},
-      {col:'age_bucket',val:'55-64',n:60732,pos:0.4613,acc:0.6757,auroc:0.7509,prauc:0.7160,brier:0.1963},
-      {col:'age_bucket',val:'65+',n:18594,pos:0.4274,acc:0.7022,auroc:0.7737,prauc:0.7171,brier:0.1871},
-      {col:'age_bucket',val:'unknown',n:43182,pos:0.5135,acc:0.7118,auroc:0.8224,prauc:0.8136,brier:0.1685},
-      {col:'Region',val:'NYC',n:463938,pos:0.2337,acc:0.7859,auroc:0.6962,prauc:0.4245,brier:0.1732},
-      {col:'Region',val:'ONYC',n:351165,pos:0.6932,acc:0.6046,auroc:0.6946,prauc:0.8389,brier:0.1987}
+      {col:'Race',val:'Asian',n:10410,pos:0.2369,acc:0.7931,auroc:0.7722,prauc:0.5763,brier:0.1457},
+      {col:'Race',val:'Black',n:99112,pos:0.3030,acc:0.7843,auroc:0.8276,prauc:0.7087,brier:0.1465},
+      {col:'Race',val:'Indian',n:1081,pos:0.2979,acc:0.8057,auroc:0.8357,prauc:0.7391,brier:0.1398},
+      {col:'Race',val:'Other',n:2087,pos:0.6358,acc:0.7130,auroc:0.8178,prauc:0.8931,brier:0.1690},
+      {col:'Race',val:'Unknown',n:81208,pos:0.6325,acc:0.7859,auroc:0.8531,prauc:0.8999,brier:0.1454},
+      {col:'Race',val:'White',n:77803,pos:0.4082,acc:0.7746,auroc:0.8550,prauc:0.8189,brier:0.1503},
+      {col:'Ethnicity',val:'Hispanic',n:57846,pos:0.3133,acc:0.7767,auroc:0.8273,prauc:0.7181,brier:0.1492},
+      {col:'Ethnicity',val:'Non-Hispanic',n:106256,pos:0.4136,acc:0.7536,auroc:0.8258,prauc:0.7925,brier:0.1640},
+      {col:'Ethnicity',val:'Unknown',n:107599,pos:0.5131,acc:0.8125,auroc:0.8947,prauc:0.8901,brier:0.1300},
+      {col:'Gender',val:'Female',n:56009,pos:0.4272,acc:0.7770,auroc:0.8669,prauc:0.8344,brier:0.1476},
+      {col:'Gender',val:'Male',n:204078,pos:0.4339,acc:0.7797,auroc:0.8614,prauc:0.8353,brier:0.1491},
+      {col:'Gender',val:'Unknown',n:11614,pos:0.4141,acc:0.8432,auroc:0.9059,prauc:0.8736,brier:0.1172},
+      {col:'age_bucket',val:'<18',n:1891,pos:0.2586,acc:0.8276,auroc:0.9167,prauc:0.7565,brier:0.1175},
+      {col:'age_bucket',val:'18-24',n:43464,pos:0.3840,acc:0.7953,auroc:0.8726,prauc:0.8239,brier:0.1394},
+      {col:'age_bucket',val:'25-34',n:85081,pos:0.4161,acc:0.7857,auroc:0.8643,prauc:0.8282,brier:0.1463},
+      {col:'age_bucket',val:'35-44',n:65848,pos:0.4473,acc:0.7753,auroc:0.8581,prauc:0.8363,brier:0.1518},
+      {col:'age_bucket',val:'45-54',n:34581,pos:0.4586,acc:0.7629,auroc:0.8498,prauc:0.8306,brier:0.1574},
+      {col:'age_bucket',val:'55-64',n:20244,pos:0.4613,acc:0.7475,auroc:0.8376,prauc:0.8189,brier:0.1639},
+      {col:'age_bucket',val:'65+',n:6198,pos:0.4274,acc:0.7596,auroc:0.8560,prauc:0.8261,brier:0.1554},
+      {col:'age_bucket',val:'unknown',n:14394,pos:0.5135,acc:0.8458,auroc:0.9187,prauc:0.9281,brier:0.1117},
+      {col:'Region',val:'NYC',n:154646,pos:0.2337,acc:0.7997,auroc:0.8014,prauc:0.5802,brier:0.1383},
+      {col:'Region',val:'ONYC',n:117055,pos:0.6932,acc:0.7582,auroc:0.8069,prauc:0.9017,brier:0.1595}
     ];
 
     // Populate subgroup table (runs once)
@@ -286,35 +286,26 @@
 
     // ── County data ──
     var counties = [
-      {name:'Monroe',auroc:0.7684,n:16629},{name:'Queens',auroc:0.7233,n:114330},{name:'Orange',auroc:0.7090,n:13638},
-      {name:'Other',auroc:0.7091,n:6261},{name:'Nassau',auroc:0.7069,n:51288},{name:'Putnam',auroc:0.7009,n:1596},
-      {name:'Ulster',auroc:0.7008,n:4974},{name:'Onondaga',auroc:0.6930,n:15237},{name:'Erie',auroc:0.6956,n:29325},
-      {name:'Rockland',auroc:0.6900,n:4845},{name:'New York',auroc:0.6896,n:106383},{name:'Richmond',auroc:0.6875,n:21387},
-      {name:'Broome',auroc:0.6879,n:7443},{name:'Delaware',auroc:0.6790,n:996},
-      {name:'Bronx',auroc:0.6725,n:78264},{name:'Niagara',auroc:0.6694,n:10425},
-      {name:'Suffolk',auroc:0.6692,n:49020},{name:'Dutchess',auroc:0.6616,n:6393},
-      {name:'Tompkins',auroc:0.6583,n:2760},{name:'Tioga',auroc:0.6589,n:705},
-      {name:'Saratoga',auroc:0.6576,n:6222},{name:'Oswego',auroc:0.6559,n:4449},
-      {name:'Albany',auroc:0.6524,n:11001},{name:'Columbia',auroc:0.6510,n:1506},
-      {name:'Schuyler',auroc:0.6523,n:516},{name:'Kings',auroc:0.6494,n:143574},
-      {name:'Westchester',auroc:0.6410,n:25221},{name:'Madison',auroc:0.6400,n:1812},
-      {name:'Clinton',auroc:0.6373,n:3261},{name:'Sullivan',auroc:0.6374,n:1872},
-      {name:'Fulton',auroc:0.6363,n:2226},{name:'Greene',auroc:0.6306,n:1557},
-      {name:'Oneida',auroc:0.6321,n:9525},{name:'Chenango',auroc:0.6292,n:1482},
-      {name:'Genesee',auroc:0.6285,n:2274},{name:'Rensselaer',auroc:0.6285,n:3915},
-      {name:'St. Lawrence',auroc:0.6248,n:2637},{name:'Warren',auroc:0.6231,n:3237},
-      {name:'Cayuga',auroc:0.6226,n:2256},{name:'Cattaraugus',auroc:0.6218,n:3735},
-      {name:'Schenectady',auroc:0.6200,n:6831},{name:'Seneca',auroc:0.5806,n:1002},
-      {name:'Yates',auroc:0.6140,n:348},{name:'Ontario',auroc:0.6139,n:2601},
-      {name:'Wayne',auroc:0.6129,n:1731},{name:'Otsego',auroc:0.6125,n:1482},
-      {name:'Chautauqua',auroc:0.6045,n:6915},{name:'Chemung',auroc:0.6037,n:3843},
-      {name:'Steuben',auroc:0.5998,n:3003},{name:'Wyoming',auroc:0.5972,n:855},
-      {name:'Washington',auroc:0.5940,n:1542},{name:'Lewis',auroc:0.5919,n:333},
-      {name:'Allegany',auroc:0.6205,n:984},{name:'Livingston',auroc:0.5872,n:1374},
-      {name:'Montgomery',auroc:0.5827,n:2505},{name:'Herkimer',auroc:0.5719,n:1428},
-      {name:'Jefferson',auroc:0.5681,n:4410},{name:'Orleans',auroc:0.5680,n:834},
-      {name:'Essex',auroc:0.5609,n:786},{name:'Cortland',auroc:0.5464,n:2598},
-      {name:'Franklin',auroc:0.5448,n:1041},{name:'Schoharie',auroc:0.5155,n:693}
+      {name:'Putnam',auroc:0.8758,n:532},{name:'Queens',auroc:0.8433,n:38110},{name:'Delaware',auroc:0.8563,n:332},
+      {name:'Monroe',auroc:0.8381,n:5543},{name:'Orange',auroc:0.8376,n:4546},{name:'Nassau',auroc:0.8350,n:17096},
+      {name:'Columbia',auroc:0.8356,n:502},{name:'Greene',auroc:0.8344,n:519},{name:'Tioga',auroc:0.8352,n:235},
+      {name:'Schuyler',auroc:0.8338,n:172},{name:'Fulton',auroc:0.8394,n:742},{name:'Ulster',auroc:0.8330,n:1658},
+      {name:'Cayuga',auroc:0.8214,n:752},{name:'Niagara',auroc:0.8206,n:3475},{name:'Tompkins',auroc:0.8184,n:920},
+      {name:'Saratoga',auroc:0.8153,n:2074},{name:'Genesee',auroc:0.8109,n:758},{name:'Oswego',auroc:0.8055,n:1483},
+      {name:'Westchester',auroc:0.8034,n:8407},{name:'Clinton',auroc:0.8019,n:1087},{name:'Dutchess',auroc:0.7980,n:2131},
+      {name:'New York',auroc:0.7913,n:35461},{name:'Yates',auroc:0.7912,n:116},{name:'Richmond',auroc:0.7842,n:7129},
+      {name:'Bronx',auroc:0.7758,n:26088},{name:'Sullivan',auroc:0.7776,n:624},{name:'Albany',auroc:0.7734,n:3667},
+      {name:'Allegany',auroc:0.7782,n:328},{name:'Erie',auroc:0.7773,n:9775},{name:'Suffolk',auroc:0.7754,n:16340},
+      {name:'Onondaga',auroc:0.7714,n:5079},{name:'Montgomery',auroc:0.7710,n:835},{name:'Chenango',auroc:0.7587,n:494},
+      {name:'Ontario',auroc:0.7588,n:867},{name:'Cattaraugus',auroc:0.7600,n:1245},{name:'Madison',auroc:0.7641,n:604},
+      {name:'St. Lawrence',auroc:0.7448,n:879},{name:'Oneida',auroc:0.7526,n:3175},{name:'Lewis',auroc:0.7522,n:111},
+      {name:'Rockland',auroc:0.7527,n:1615},{name:'Schenectady',auroc:0.7479,n:2277},{name:'Broome',auroc:0.7451,n:2481},
+      {name:'Kings',auroc:0.7458,n:47858},{name:'Herkimer',auroc:0.7456,n:476},{name:'Chemung',auroc:0.7430,n:1281},
+      {name:'Rensselaer',auroc:0.7387,n:1305},{name:'Wayne',auroc:0.7347,n:577},{name:'Warren',auroc:0.7343,n:1079},
+      {name:'Chautauqua',auroc:0.7250,n:2305},{name:'Washington',auroc:0.7252,n:514},{name:'Livingston',auroc:0.7140,n:458},
+      {name:'Otsego',auroc:0.7094,n:494},{name:'Seneca',auroc:0.7004,n:334},{name:'Steuben',auroc:0.6870,n:1001},
+      {name:'Orleans',auroc:0.6825,n:278},{name:'Jefferson',auroc:0.6806,n:1470},{name:'Franklin',auroc:0.6644,n:347},
+      {name:'Essex',auroc:0.6577,n:262},{name:'Cortland',auroc:0.6209,n:866},{name:'Schoharie',auroc:0.5211,n:231}
     ].sort(function(a, b) { return b.auroc - a.auroc; });
 
     var maxN = Math.max.apply(null, counties.map(function(c) { return c.n; }));
@@ -336,8 +327,8 @@
           labels: ['AUROC', 'PR-AUC', 'Accuracy', 'Brier Score', 'Log Loss'],
           datasets: [
             { label: 'Dummy', data: [0.5, 0.4316, 0.5684, 0.2461, 0.6854], backgroundColor: C.muted, borderRadius: 4 },
-            { label: 'Logistic Regression', data: [0.8465, 0.8148, 0.7688, 0.1569, 0.4783], backgroundColor: C.accent, borderRadius: 4 },
-            { label: 'Hist. Gradient Boosting', data: [0.8644, 0.8302, 0.7861, 0.1496, 0.4615], backgroundColor: C.navy, borderRadius: 4 }
+            { label: 'Logistic Regression', data: [0.8643, 0.8364, 0.7818, 0.1474, 0.4523], backgroundColor: C.accent, borderRadius: 4 },
+            { label: 'Hist. Gradient Boosting', data: [0.8639, 0.8314, 0.7847, 0.1499, 0.4620], backgroundColor: C.navy, borderRadius: 4 }
           ]
         },
         options: {
@@ -348,8 +339,8 @@
       }));
 
       // ── Calibration Curve ──
-      var calPred = [0.0725, 0.1684, 0.2767, 0.4496, 0.4608, 0.5541, 0.7208, 0.9006];
-      var calObs  = [0.0527, 0.1361, 0.2517, 0.4217, 0.4790, 0.5349, 0.7316, 0.9220];
+      var calPred = [0.0403, 0.0950, 0.1474, 0.2231, 0.3305, 0.4383, 0.5694, 0.7072, 0.8516, 0.9554];
+      var calObs  = [0.0290, 0.0901, 0.1314, 0.2102, 0.3347, 0.4532, 0.5506, 0.7080, 0.8524, 0.9569];
 
       chartInstances.push(new Chart(document.getElementById('calibrationChart'), {
         type: 'scatter',

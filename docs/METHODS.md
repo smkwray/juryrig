@@ -8,7 +8,7 @@ Every model, algorithm, library, and configuration used in the juryrig project.
 
 All predictive models are scikit-learn classifiers.
 
-### 1.1 HistGradientBoostingClassifier (primary)
+### 1.1 HistGradientBoostingClassifier
 
 Histogram-based gradient boosting from scikit-learn. Uses default scikit-learn hyperparameters (no custom tuning). Post-hoc sigmoid calibration is applied via `CalibratedClassifierCV`.
 
@@ -19,7 +19,7 @@ Histogram-based gradient boosting from scikit-learn. Uses default scikit-learn h
 | Preprocessing | `OrdinalEncoder` for categorical features, `SimpleImputer` for missing values |
 | Random state | 7 |
 
-### 1.2 LogisticRegression (baseline)
+### 1.2 LogisticRegression
 
 Linear classifier from scikit-learn.
 

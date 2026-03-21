@@ -10,17 +10,17 @@ This project analyzes public New York State court records to examine patterns in
 
 **Data:** About 1.6 million public arraignment records from the OCA-STAT dataset, covering cases filed between 2021 and 2025. The model was tested on a held-out set of 271,701 cases it had not seen during training.
 
-**What the model does:** It takes in case-level details available at arraignment — such as county, charge severity, arrest type, gender, ethnicity, and race — and outputs a probability of conviction. It does not use any information from after arraignment.
+**What the model does:** It takes in case-level details available at arraignment — such as county, charge severity, and arrest type. Protected attributes (gender, ethnicity, race) are excluded from training by default but retained for subgroup auditing — and outputs a probability of conviction. It does not use any information from after arraignment.
 
-**How well it works:** The best-performing model correctly classified about 79% of cases. Its AUROC score — a measure of how well it ranks cases from least to most likely to end in conviction — was 0.86 out of 1.0. That is substantially better than a coin-flip baseline (0.50) and indicates the model picks up real patterns in the data.
+**How well it works:** The best-performing model (logistic regression) correctly classified about 78% of cases. Its AUROC score — a measure of how well it ranks cases from least to most likely to end in conviction — was 0.86 out of 1.0. That is substantially better than a coin-flip baseline (0.50) and indicates the model picks up real patterns in the data.
 
 **Strongest patterns:**
 
-- Geography matters most. Cases in NYC courts have a raw conviction rate of about 25%; courts outside NYC have a rate of about 69%.
+- Geography matters most. Cases in NYC courts have a raw conviction rate of about 23%; courts outside NYC have a rate of about 69%.
 - Charge severity also matters. Felony cases have a conviction rate of about 66%; violations have a rate of about 25%.
 - Model accuracy varies by county. Some counties are much easier for the model to predict than others.
 
-**Race and demographic results:** The model's accuracy differs across racial groups. For example, the model ranks cases more accurately for White defendants (AUROC 0.77) than for Black (0.74) or Asian (0.68) defendants. Raw conviction rates also differ by race.
+**Race and demographic results:** The model's accuracy differs across racial groups. For example, the model ranks cases more accurately for White defendants (AUROC 0.86) than for Black (0.83) or Asian (0.77) defendants. Raw conviction rates also differ by race.
 
 ## Branch 2: Pretrial release rates around bail-law amendments
 

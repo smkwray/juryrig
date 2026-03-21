@@ -56,12 +56,12 @@ scripts/uvsafe python -m ny_oca_conviction.cli build-dataset --snapshot-date 202
 scripts/uvsafe python -m ny_oca_conviction.cli train --config configs/train_baseline.yaml
 scripts/uvsafe python -m ny_oca_conviction.cli evaluate --run-id latest
 scripts/uvsafe python -m ny_oca_conviction.cli report --run-id latest
-scripts/uvsafe python -m ny_oca_conviction.cli build-public-figures --run-id 20260307_224037
+scripts/uvsafe python -m ny_oca_conviction.cli build-public-figures
 ```
 
 ## Reference run
 
-- run id: `20260307_224037`
+- run id: `20260320_231413`
 - model table rows: `1,609,252`
-- best baseline: `hist_gradient_boosting`
+- best baseline: `logistic_regression`
 - note: run outputs are generated locally under `artifacts/` and are not committed to the repo

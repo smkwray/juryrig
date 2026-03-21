@@ -71,7 +71,7 @@
           <div class="faq-answer-inner">
             It estimates the probability that a criminal case will end in conviction (as opposed to
             dismissal or acquittal). It uses only information available around the time of arraignment &mdash;
-            things like county, charge severity, arrest type, gender, ethnicity, and race. It does not
+            things like county, charge severity, and arrest type. Protected attributes (gender, ethnicity, race) are excluded from training by default but retained for auditing. It does not
             use any post-arraignment information such as plea negotiations or evidence.
           </div>
         </div>
@@ -83,7 +83,7 @@
         </button>
         <div class="faq-answer">
           <div class="faq-answer-inner">
-            The best model correctly classified about 79% of test cases and achieved an AUROC of 0.86
+            The best model correctly classified about 78% of test cases and achieved an AUROC of 0.86
             (on a scale from 0.5 to 1.0, where higher is better). In practical terms, it is substantially
             better than guessing and picks up real patterns, but it is not perfect. Accuracy varies across
             counties (0.52&ndash;0.77 AUROC) and demographic groups.
@@ -97,7 +97,7 @@
         </button>
         <div class="faq-answer">
           <div class="faq-answer-inner">
-            <p>Race is included as a feature in the model. Conviction rates and model accuracy both vary
+            <p>Race is not used as a training feature by default, but it is retained in the data for subgroup analysis. Conviction rates and model accuracy both vary
             across racial groups. Three independent adjusted-analysis methods show that non-White defendants
             have lower conviction rates than White defendants with similar case profiles.</p>
             <p style="margin-top: 0.5rem;">The Black&ndash;White gap is roughly 2.5&ndash;2.8 percentage points across all methods.
@@ -201,7 +201,7 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
-      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260320_231413</code></span>
     </div>
   </footer>
 </body>

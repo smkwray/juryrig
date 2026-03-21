@@ -64,6 +64,7 @@ def train_models(config_path: Path) -> dict[str, str]:
 
     prediction_rows: list[pd.DataFrame] = []
     metrics_by_model: dict[str, dict[str, Any]] = {}
+    validation_metrics_by_model: dict[str, dict[str, Any]] = {}
     best_model_name: str | None = None
     best_model_brier: float | None = None
 
@@ -98,6 +99,7 @@ def train_models(config_path: Path) -> dict[str, str]:
         val_metrics = binary_metrics(val_slice["y_true"], val_slice["y_prob"])
         test_metrics = binary_metrics(test_slice["y_true"], test_slice["y_prob"])
         metrics_by_model[spec.name] = test_metrics
+        validation_metrics_by_model[spec.name] = val_metrics
         if best_model_brier is None or val_metrics["brier_score"] < best_model_brier:
             best_model_name = spec.name
             best_model_brier = val_metrics["brier_score"]
@@ -109,7 +111,10 @@ def train_models(config_path: Path) -> dict[str, str]:
         "dataset_summary_path": str(paths.processed / "model_table_summary.json"),
         "config_path": str(config_path),
         "best_model": best_model_name,
+        "selection_metric": "brier_score",
+        "selection_split": "validation",
         "models": metrics_by_model,
+        "validation_models": validation_metrics_by_model,
     }
     write_json(run_dir / "metrics.json", metrics_payload)
     return {"run_id": run_id, "run_dir": str(run_dir), "metrics": str(run_dir / "metrics.json")}

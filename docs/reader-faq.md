@@ -18,11 +18,11 @@ It estimates the probability that a criminal case will end in conviction (as opp
 
 ### How accurate is the model?
 
-The best model correctly classified about 79% of test cases and achieved an AUROC of 0.86 (on a scale from 0.5 to 1.0, where higher is better). In practical terms, it is substantially better than guessing and picks up real patterns, but it is not perfect.
+The best model correctly classified about 78% of test cases and achieved an AUROC of 0.86 (on a scale from 0.5 to 1.0, where higher is better). In practical terms, it is substantially better than guessing and picks up real patterns, but it is not perfect.
 
 ### What does it show about race?
 
-Race is included as a feature in the model. Conviction rates and model accuracy both vary across racial groups. For example, the model ranks cases more accurately for White defendants (AUROC 0.77) than for Black (0.74) or Asian (0.68) defendants. Explaining why these differences exist would require additional data and a different research design.
+Race is not used as a training feature by default, but it is retained in the data for subgroup analysis. Conviction rates and model accuracy both vary across racial groups. For example, the model ranks cases more accurately for White defendants (AUROC 0.86) than for Black (0.83) or Asian (0.77) defendants. Explaining why these differences exist would require additional data and a different research design.
 
 ### What does it show about bail-law amendments?
 

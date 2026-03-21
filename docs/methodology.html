@@ -33,7 +33,7 @@
     <h1>Methodology</h1>
     <p class="page-intro">
       Every model, algorithm, library, and configuration used in the juryrig project.
-      All predictive models are scikit-learn classifiers. Python 3.10+, managed via <code>uv</code>.
+      All predictive models are scikit-learn classifiers. Python 3.11+, managed via <code>uv</code>.
     </p>
 
     <!-- Models -->
@@ -43,7 +43,7 @@
         <span class="section-tag">Scikit-learn</span>
       </div>
 
-      <h3>1. HistGradientBoostingClassifier (primary)</h3>
+      <h3>1. HistGradientBoostingClassifier</h3>
       <p>Histogram-based gradient boosting from scikit-learn. Uses default hyperparameters (no custom tuning).
       Post-hoc sigmoid calibration applied via <code>CalibratedClassifierCV</code>.</p>
 
@@ -57,7 +57,7 @@
         </tbody>
       </table>
 
-      <h3>2. LogisticRegression (baseline)</h3>
+      <h3>2. LogisticRegression</h3>
       <p>Linear classifier from scikit-learn.</p>
 
       <table class="data-table">
@@ -133,7 +133,7 @@
         </tbody>
       </table>
 
-      <p>Model selection uses Brier score on the evaluation split. Subgroup metrics computed by
+      <p>Model selection uses Brier score on the validation split. Subgroup metrics computed by
       Race, Ethnicity, Gender, age_bucket, and Region.</p>
     </section>
 
@@ -143,8 +143,8 @@
         <h2>Feature Policy</h2>
       </div>
 
-      <p>19 features from OCA-STAT arraignment-time fields. The default configuration (<code>include_all</code>)
-      includes Gender, Ethnicity, and Race.</p>
+      <p>16 features from OCA-STAT arraignment-time fields. The default configuration (<code>audit_only</code>)
+      excludes Gender, Ethnicity, and Race from training but retains them for subgroup auditing.</p>
 
       <h4>Target</h4>
       <table class="data-table">
@@ -233,14 +233,14 @@
         <thead><tr><th>Field</th><th>Value</th></tr></thead>
         <tbody>
           <tr><td>Snapshot date</td><td><code>2026-03-07</code></td></tr>
-          <tr><td>Run ID</td><td><code>20260307_224037</code></td></tr>
+          <tr><td>Run ID</td><td><code>20260320_231413</code></td></tr>
           <tr><td>Modeled rows</td><td>1,609,252</td></tr>
           <tr><td>Test rows</td><td>271,701</td></tr>
-          <tr><td>Feature count</td><td>19</td></tr>
+          <tr><td>Feature count</td><td>16</td></tr>
           <tr><td>Maturity threshold</td><td>&ge; 90% disposed share by cohort</td></tr>
-          <tr><td>Best model</td><td>HistGradientBoostingClassifier</td></tr>
-          <tr><td>Best AUROC</td><td>0.8644</td></tr>
-          <tr><td>Best Brier</td><td>0.1496</td></tr>
+          <tr><td>Best model</td><td>LogisticRegression</td></tr>
+          <tr><td>Best AUROC</td><td>0.8643</td></tr>
+          <tr><td>Best Brier</td><td>0.1474</td></tr>
         </tbody>
       </table>
 
@@ -251,7 +251,7 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span>juryrig &middot; MIT License &middot; Shane Wray 2026</span>
-      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260307_224037</code></span>
+      <span>Reference run: <code style="color: rgba(255,255,255,0.8);">20260320_231413</code></span>
     </div>
   </footer>
 </body>
