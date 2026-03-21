@@ -14,7 +14,7 @@ OCA-STAT is a public dataset maintained by the New York State Office of Court Ad
 
 ### What does the model actually predict?
 
-It estimates the probability that a criminal case will end in conviction (as opposed to dismissal or acquittal). It uses only information available around the time of arraignment — things like county, charge severity, arrest type, gender, ethnicity, and race. It does not use any post-arraignment information.
+It estimates the probability that a criminal case will end in conviction (as opposed to dismissal or acquittal). It uses only information available around the time of arraignment — things like county, charge severity, and arrest type. Protected attributes (gender, ethnicity, race) are excluded from training by default but retained for subgroup auditing. It does not use any post-arraignment information.
 
 ### How accurate is the model?
 
@@ -32,7 +32,7 @@ The pretrial branch compares release rates before and after the May 2022 and Jun
 
 The two strongest patterns in the predictive branch are:
 
-- **Geography:** NYC courts have a raw conviction rate of about 25%; courts outside NYC have a rate of about 69%.
+- **Geography:** NYC courts have a raw conviction rate of about 23%; courts outside NYC have a rate of about 69%.
 - **Charge severity:** Felonies have a conviction rate of about 66%; violations have a rate of about 25%.
 
 These dwarf other factors in the data.
