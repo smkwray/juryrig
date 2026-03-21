@@ -29,7 +29,7 @@ def test_svg_renderers_emit_expected_labels():
             "hist_gradient_boosting": {"auroc": 0.86, "pr_auc": 0.83, "brier_score": 0.15},
         }
     }
-    svg = _render_predictive_metrics_svg(metrics)
+    svg = _render_predictive_metrics_svg(metrics, "test_run")
     assert "Predictive branch: model comparison" in svg
     assert "Hist GB" in svg
 

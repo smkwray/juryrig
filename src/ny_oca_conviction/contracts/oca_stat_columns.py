@@ -47,6 +47,7 @@ LEAKAGE_DENYLIST = {
 
 PROTECTED_ATTRIBUTES = {"Gender", "Ethnicity", "Race"}
 IDENTIFIER_COLUMNS = {"Row #"}
+FORCE_CATEGORICAL = {"Law", "Article.Section"}
 
 
 def _slug(value: str) -> str:

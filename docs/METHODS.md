@@ -75,7 +75,7 @@ Implementation: `src/ny_oca_conviction/models/calibrate.py`, `src/ny_oca_convict
 | **PR-AUC** | Positive-class ranking | Area under the precision-recall curve |
 | **Brier score** | Calibration quality | Mean squared error of predicted probabilities (lower is better) |
 
-Model selection uses Brier score on the evaluation split. Subgroup metrics are computed by Race, Ethnicity, Gender, age_bucket, and Region. Per-run results are recorded in [`model-card.md`](model-card.md).
+Model selection uses Brier score on the validation split. Subgroup metrics are computed by Race, Ethnicity, Gender, age_bucket, and Region. Per-run results are recorded in [`model-card.md`](model-card.md).
 
 ---
 
@@ -83,7 +83,7 @@ Model selection uses Brier score on the evaluation split. Subgroup metrics are c
 
 See [`modeling.md`](modeling.md) for the full target definition, leakage-exclusion list, and feature-inclusion configuration.
 
-Summary: 19 features from OCA-STAT arraignment-time fields. The default configuration (`include_all`) includes Gender, Ethnicity, and Race. Data sources and provenance: [`data.md`](data.md).
+Summary: 19 features from OCA-STAT arraignment-time fields. The default configuration (`audit_only`) excludes Gender, Ethnicity, and Race from training but retains them for subgroup auditing. Use `include_all` to opt in to protected-attribute training. Data sources and provenance: [`data.md`](data.md).
 
 ---
 
@@ -96,4 +96,4 @@ Summary: 19 features from OCA-STAT arraignment-time fields. The default configur
 | numpy | Numerical operations |
 | pyarrow / parquet | Data storage format |
 
-Python 3.10+. Dependencies managed via `uv` (`scripts/uvsafe`).
+Python 3.11+. Dependencies managed via `uv` (`scripts/uvsafe`).

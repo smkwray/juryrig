@@ -6,6 +6,7 @@ from typing import Any
 import pandas as pd
 
 from ny_oca_conviction.config import ensure_project_layout
+from ny_oca_conviction.evaluation.report import resolve_run_directory
 from ny_oca_conviction.utils.io import ensure_directory, read_json, write_json
 
 PLOT_WIDTH = 920
@@ -23,13 +24,15 @@ GREEN = "#6a994e"
 SLATE = "#7b8794"
 
 
-def build_public_figures(run_id: str = "20260307_224037") -> dict[str, Any]:
+def build_public_figures(run_id: str = "latest") -> dict[str, Any]:
     paths = ensure_project_layout()
+    run_dir = resolve_run_directory(run_id)
+    run_id = run_dir.name
     figures_dir = ensure_directory(paths.root / "docs" / "figures")
 
-    metrics = read_json(paths.runs / run_id / "metrics.json")
-    subgroup = pd.read_csv(paths.runs / run_id / "subgroup_audit.csv")
-    county = pd.read_csv(paths.runs / run_id / "county_transfer.csv")
+    metrics = read_json(run_dir / "metrics.json")
+    subgroup = pd.read_csv(run_dir / "subgroup_audit.csv")
+    county = pd.read_csv(run_dir / "county_transfer.csv")
     exposure_diffs = pd.read_csv(
         paths.processed_supplemental_pretrial / "policy_exposure_diffs.csv"
     )
@@ -58,7 +61,7 @@ def build_public_figures(run_id: str = "20260307_224037") -> dict[str, Any]:
     }
 
     outputs["predictive_metrics"].write_text(
-        _render_predictive_metrics_svg(metrics),
+        _render_predictive_metrics_svg(metrics, run_id),
         encoding="utf-8",
     )
     outputs["race_subgroup_auroc"].write_text(
@@ -99,7 +102,7 @@ def build_public_figures(run_id: str = "20260307_224037") -> dict[str, Any]:
     return payload
 
 
-def _render_predictive_metrics_svg(metrics: dict[str, Any]) -> str:
+def _render_predictive_metrics_svg(metrics: dict[str, Any], run_id: str = "") -> str:
     models = ["dummy", "logistic_regression", "hist_gradient_boosting"]
     labels = {
         "dummy": "Dummy",
@@ -127,7 +130,10 @@ def _render_predictive_metrics_svg(metrics: dict[str, Any]) -> str:
     parts = [_svg_start("Predictive model comparison", height=height)]
     parts.append(_panel(height=height))
     parts.append(
-        _title("Predictive branch: model comparison", "Reference run 20260307_224037")
+        _title(
+            "Predictive branch: model comparison",
+            f"Reference run {run_id}" if run_id else "Model comparison",
+        )
     )
     parts.append(
         _text(

@@ -11,6 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MaxAbsScaler, OneHotEncoder, OrdinalEncoder
 
+from ny_oca_conviction.contracts.oca_stat_columns import FORCE_CATEGORICAL
 from ny_oca_conviction.models.calibrate import maybe_calibrate
 
 
@@ -27,6 +28,9 @@ def _split_feature_types(
     numeric_columns: list[str] = []
     categorical_columns: list[str] = []
     for column in feature_columns:
+        if column in FORCE_CATEGORICAL:
+            categorical_columns.append(column)
+            continue
         series = frame[column]
         if pd.api.types.is_numeric_dtype(series):
             numeric_columns.append(column)

@@ -1,5 +1,6 @@
 from ny_oca_conviction.contracts.oca_stat_columns import (
     CANONICAL_COLUMNS,
+    FORCE_CATEGORICAL,
     LEAKAGE_DENYLIST,
     PROTECTED_ATTRIBUTES,
     default_training_columns,
@@ -36,6 +37,11 @@ def test_default_training_columns_can_include_protected_attributes():
     assert "Gender" in columns
     assert "Ethnicity" in columns
     assert "Race" in columns
+
+
+def test_force_categorical_contains_expected_columns():
+    assert "Law" in FORCE_CATEGORICAL
+    assert "Article.Section" in FORCE_CATEGORICAL
 
 
 def test_supplemental_pretrial_contract_has_expected_column_count():

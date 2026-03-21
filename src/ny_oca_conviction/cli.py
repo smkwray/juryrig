@@ -247,7 +247,7 @@ def build_supplemental_pretrial_policy_effects_command() -> None:
 
 @app.command("build-public-figures")
 def build_public_figures_command(
-    run_id: Annotated[str, typer.Option()] = "20260307_224037",
+    run_id: Annotated[str, typer.Option()] = "latest",
 ) -> None:
     payload = build_public_figures(run_id=run_id)
     console.print_json(data=payload)

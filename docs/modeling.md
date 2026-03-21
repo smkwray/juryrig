@@ -21,6 +21,6 @@ Default training features exclude:
 - `Fees Imposed`
 - `Surcharges Imposed`
 
-The current configuration (`include_all`) includes `Gender`, `Ethnicity`, and `Race` in the
-training feature set.
+The current configuration (`audit_only`) excludes `Gender`, `Ethnicity`, and `Race` from
+training but retains them for subgroup auditing. Use `include_all` to opt in explicitly.
 

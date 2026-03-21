@@ -27,7 +27,12 @@ def evaluate_run(run_id: str, subgroup_columns: list[str]) -> dict[str, str]:
     predictions = pd.read_csv(run_dir / "predictions.csv")
     metrics_payload = read_json(run_dir / "metrics.json")
 
-    test_predictions = predictions[predictions["split"] == "test"].copy()
+    best_model = metrics_payload.get("best_model")
+    if best_model is None:
+        raise ValueError("metrics.json is missing 'best_model' key.")
+    test_predictions = predictions[
+        (predictions["split"] == "test") & (predictions["model"] == best_model)
+    ].copy()
     subgroup_frame = subgroup_metrics(test_predictions, subgroup_columns)
     county_frame = county_metrics(test_predictions)
     calibration_frame = calibration_table(test_predictions)

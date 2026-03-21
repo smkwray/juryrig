@@ -9,6 +9,7 @@ import yaml
 from sklearn.base import clone
 
 from ny_oca_conviction.config import ensure_project_layout
+from ny_oca_conviction.contracts.oca_stat_columns import FORCE_CATEGORICAL
 from ny_oca_conviction.dataset.features import resolve_feature_columns
 from ny_oca_conviction.dataset.labels import LABEL_COLUMN
 from ny_oca_conviction.evaluation.metrics import binary_metrics
@@ -32,6 +33,8 @@ def train_models(config_path: Path) -> dict[str, str]:
 
     frame = frame.copy()
     for column in feature_columns:
+        if column in FORCE_CATEGORICAL:
+            continue
         converted = pd.to_numeric(frame[column], errors="coerce")
         if converted.notna().any():
             frame[column] = converted
@@ -90,12 +93,14 @@ def train_models(config_path: Path) -> dict[str, str]:
         model_predictions["y_prob"] = eval_probs
         prediction_rows.append(model_predictions)
 
+        val_slice = model_predictions[model_predictions["split"] == "validation"]
         test_slice = model_predictions[model_predictions["split"] == "test"]
-        metrics = binary_metrics(test_slice["y_true"], test_slice["y_prob"])
-        metrics_by_model[spec.name] = metrics
-        if best_model_brier is None or metrics["brier_score"] < best_model_brier:
+        val_metrics = binary_metrics(val_slice["y_true"], val_slice["y_prob"])
+        test_metrics = binary_metrics(test_slice["y_true"], test_slice["y_prob"])
+        metrics_by_model[spec.name] = test_metrics
+        if best_model_brier is None or val_metrics["brier_score"] < best_model_brier:
             best_model_name = spec.name
-            best_model_brier = metrics["brier_score"]
+            best_model_brier = val_metrics["brier_score"]
 
     predictions = pd.concat(prediction_rows, ignore_index=True)
     predictions.to_csv(run_dir / "predictions.csv", index=False)
