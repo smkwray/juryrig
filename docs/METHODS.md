@@ -83,7 +83,7 @@ Model selection uses Brier score on the validation split. Subgroup metrics are c
 
 See [`modeling.md`](modeling.md) for the full target definition, leakage-exclusion list, and feature-inclusion configuration.
 
-Summary: 19 features from OCA-STAT arraignment-time fields. The default configuration (`audit_only`) excludes Gender, Ethnicity, and Race from training but retains them for subgroup auditing. Use `include_all` to opt in to protected-attribute training. Data sources and provenance: [`data.md`](data.md).
+Summary: 16 training features from OCA-STAT arraignment-time fields. The default configuration (`audit_only`) excludes Gender, Ethnicity, and Race from training but retains them for subgroup auditing. Use `include_all` to opt in to protected-attribute training, which adds those three fields for 19 features. Data sources and provenance: [`data.md`](data.md).
 
 ---
 
@@ -96,4 +96,4 @@ Summary: 19 features from OCA-STAT arraignment-time fields. The default configur
 | numpy | Numerical operations |
 | pyarrow / parquet | Data storage format |
 
-Python 3.11+. Dependencies managed via `uv` (`scripts/uvsafe`).
+Python 3.11+. Dependencies are managed with `uv` (`uv sync`, then `uv run`).

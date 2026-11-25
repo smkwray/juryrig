@@ -39,6 +39,18 @@ def test_default_training_columns_can_include_protected_attributes():
     assert "Race" in columns
 
 
+def test_default_training_columns_are_the_16_arraignment_time_fields():
+    # The published feature count (16 by default, 19 with include_all) depends on
+    # dropping the row identifier, every post-arraignment outcome field, and, by
+    # default, the protected attributes.
+    default = default_training_columns(CANONICAL_COLUMNS)
+    assert len(default) == 16
+    assert not set(default) & (LEAKAGE_DENYLIST | PROTECTED_ATTRIBUTES | {"Row #"})
+    with_protected = default_training_columns(CANONICAL_COLUMNS, include_protected_attributes=True)
+    assert len(with_protected) == 19
+    assert set(with_protected) - set(default) == PROTECTED_ATTRIBUTES
+
+
 def test_force_categorical_contains_expected_columns():
     assert "Law" in FORCE_CATEGORICAL
     assert "Article.Section" in FORCE_CATEGORICAL
