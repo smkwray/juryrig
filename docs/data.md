@@ -14,9 +14,9 @@
 - Primary landing directory: `data/raw/supplemental_pretrial/`
 - Provenance file: `data/raw/supplemental_pretrial/manifest.json`
 - First-pass commands:
-  - `scripts/uvsafe python -m ny_oca_conviction.cli fetch-supplemental-pretrial`
-  - `scripts/uvsafe python -m ny_oca_conviction.cli register-manual-supplemental-pretrial --path data/raw/supplemental_pretrial`
-  - `scripts/uvsafe python -m ny_oca_conviction.cli validate-supplemental-pretrial`
-  - `scripts/uvsafe python -m ny_oca_conviction.cli summarize-supplemental-pretrial`
+  - `uv run ny-oca-conviction fetch-supplemental-pretrial`
+  - `uv run ny-oca-conviction register-manual-supplemental-pretrial --path data/raw/supplemental_pretrial`
+  - `uv run ny-oca-conviction validate-supplemental-pretrial`
+  - `uv run ny-oca-conviction summarize-supplemental-pretrial`
 
 Raw CSVs and processed parquet outputs are intentionally ignored by git.
