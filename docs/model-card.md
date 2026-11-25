@@ -46,7 +46,7 @@ separately and are not used for selection.
 
 ## Audit notes
 
-- Subgroup and county outputs are under `artifacts/runs/20260320_231413/`.
+- Subgroup and county outputs are written to `artifacts/runs/<run id>/`, which is not committed; the results site shows them.
 - Error and calibration quality vary materially across counties and demographic subgroups.
 
 ## Intended use

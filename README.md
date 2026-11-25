@@ -33,11 +33,10 @@ The site has the full subgroup, county, and figure detail.
 
 ## Documentation
 
-- [Public brief](docs/public-brief.md): plain-language overview of both branches
 - [Methods](docs/METHODS.md): models, preprocessing, and feature policy
 - [Race-adjusted association](docs/race-adjusted-association.md): how the adjusted race gaps are estimated and what they mean
-- [Reader FAQ](docs/reader-faq.md)
-- [Data notes](docs/data.md) and [runbook](docs/runbook.md): sources, data download, and the full command sequence
+- [Reader FAQ](https://smkwray.github.io/juryrig/faq.html) on the results site
+- [Runbook](docs/runbook.md): data download and the full command sequence
 
 ## Method
 
